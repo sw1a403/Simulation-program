@@ -2,16 +2,16 @@
 #include <stdlib.h>
 #include <math.h>
 #include <time.h>
-#define distance 1
+#define distance 1000
 
 int main (void){
     int speed, bus, time;
-    printf("test:");
-    scanf("\n%d", &speed);
-    printf("%d", speed);
+    printf("Enter speed:");
+    scanf(" %d", &speed);
+    printf("You entered: %d\n", speed);
     time = (int)distance / speed;
-    printf("\n%d", time);
-    printf("Gay Mink");
+    printf("The travel time is : %d", time);
+    
     return EXIT_SUCCESS;
 }
     
