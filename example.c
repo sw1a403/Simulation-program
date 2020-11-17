@@ -5,13 +5,14 @@
 #define distance 1000
 
 int main (void){
-    int speed, bus, time;
-    printf("Enter speed:");
-    scanf(" %d", &speed);
-    printf("You entered: %d\n", speed);
+    int bus;
+    float speed, time;
+    printf("Enter speed (km/h): ");
+    scanf(" %f", &speed);
+    speed /= 3.6;
+    printf("Converted to m/s. You entered: %2.3f\n", speed);
     time = (int)distance / speed;
-    printf("The travel time is : %d", time);
-    
+    printf("The travel time is : %f seconds.\n", time);
+
     return EXIT_SUCCESS;
-}
-    
+}   
