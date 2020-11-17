@@ -11,6 +11,7 @@ int main (void){
     printf("%d", speed);
     time = distance / speed;
     printf("\n%d", time);
+    printf("Gay Mink");
     return EXIT_SUCCESS;
 }
     
