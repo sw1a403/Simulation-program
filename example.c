@@ -9,7 +9,7 @@ int main (void){
     printf("test:");
     scanf("\n%d", &speed);
     printf("%d", speed);
-    time = distance / speed;
+    time = (int)distance / speed;
     printf("\n%d", time);
     printf("Gay Mink");
     return EXIT_SUCCESS;
