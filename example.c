@@ -11,8 +11,8 @@ int main (void){
     scanf(" %f", &speed);
     speed /= 3.6;
     printf("Converted to m/s. You entered: %2.3f\n", speed);
-    time = (int)distance / speed;
-    printf("The travel time is : %f seconds.\n", time);
+    time = (float)distance / speed;
+    printf("The travel time is : %4.1f seconds.\n", time);
 
     return EXIT_SUCCESS;
 }   
