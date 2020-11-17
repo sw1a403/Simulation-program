@@ -3,7 +3,7 @@
 #include <time.h>
 #define MAX 100
 int element_compare(const void *ip1, const void *ip2);
-
+/* hej */
 int main(void){
     int i = 0; 
     double *numbers = malloc(MAX * sizeof(double));
