@@ -4,9 +4,9 @@
 
 int main(void){
 
-    dsada
-
-
+    while(1){
+        printf("Hello World!");
+    }
+    
     return EXIT_SUCCESS;
-
 }
