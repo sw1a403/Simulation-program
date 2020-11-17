@@ -17,16 +17,13 @@ int main (void){
     minutes = time / (float)MINUTE;
     seconds = fmod(time, MINUTE);
 
-    if(minutes == 1){
-        printf("The travel time is: 1 minute");
-    }
-    else if(minutes > 1){
-         printf("The travel time is: %4.1f minute", minutes);
+    if(minutes > 1){
+         printf("The travel time is: %4.1f minutes", minutes);
     }
     else{
         printf("The travel time is: 0 minutes");
     }
-    if(seconds == 60){
+    if(seconds == 1.0){
         printf(" and 1 second");
     }
     else if(seconds > 1){
