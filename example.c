@@ -18,8 +18,8 @@ int main (void){
     printf("Converted to m/s. You entered: %2.3f\n", speed);
 
     time = (int)distance / speed;
-    minutes = time / (int)MINUTE;
-    seconds = fmod(time, MINUTE);
+    minutes = (int)time / MINUTE;
+    seconds = (int)fmod(time, MINUTE);
 
     if (minutes == 0){
         printf("The travel time is: %d %s.\n", seconds,
