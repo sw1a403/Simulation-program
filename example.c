@@ -24,8 +24,8 @@ void simulate_one_bus(){
     char strings_plural[2][8] = {"minutes", "seconds"};
     char strings_singular[2][8] = {"minute", "second"};
     time = (int)distance / speed;
-    minutes = time / (int)MINUTE;
-    seconds = fmod(time, MINUTE);
+    minutes = (int)time / MINUTE;
+    seconds = (int)fmod(time, MINUTE);
 
     if (minutes == 0){
         printf("The travel time is: %d %s.\n", seconds,
