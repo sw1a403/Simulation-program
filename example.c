@@ -16,7 +16,7 @@ int main (void){
 }   
 
 void simulate_one_bus(){
-    int dif_distance_
+    int dif_distance_;
     int bus, interval;
     float speed;
     traffic_light(&interval);
