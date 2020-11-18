@@ -44,7 +44,7 @@ void simulate_one_bus(){
 
 void traffic_light(int *temp_interval){
     char answer = 'e';
-    while(answer != 'y' || answer != 'n'){
+    while(answer != 'y' && answer != 'n'){
         printf("\nDo you want traffic lights to be implemented? (y/n): ");
         scanf(" %c", &answer);
     }
