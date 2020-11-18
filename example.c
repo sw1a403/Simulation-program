@@ -6,7 +6,7 @@
 #define MINUTE 60
 
 int main (void){
-    int bus, minutes, seconds, time;
+    int minutes, seconds, time;
     float speed;
     char strings_plural[2][8] = {"minutes", "seconds"};
     char strings_singular[2][8] = {"minute", "second"};
@@ -28,7 +28,6 @@ int main (void){
         printf("The travel time is: %d %s. \n", minutes, 
         (minutes > 1) ? strings_plural[0] : strings_singular[0]);
     }
-
     
     else{
         printf("The travel time is: %d %s and %d %s. \n", 
