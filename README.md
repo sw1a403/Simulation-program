@@ -16,3 +16,7 @@ This way we are able to simulate what affects the travel time of a bus on Jyllan
 
 To use this program you will need to download the source code and compile main.c. You will need a C compiler like MinGW found at: http://www.mingw.org/ to compile this program. 
 
+After compiling the program and running the software you will be prompted to type in the follow user inputs:
+
+
+
