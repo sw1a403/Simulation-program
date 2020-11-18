@@ -5,18 +5,24 @@
 #define distance 1000
 #define MINUTE 60
 
-int traffic_light();
+void simulate_one_bus();
+void traffic_light(int *temp_interval);
+int speed_vehicle();
 
 int main (void){
-    int bus, minutes, seconds, time;
+    simulate_one_bus();
+    
+    return EXIT_SUCCESS;
+}   
+
+void simulate_one_bus(){
+    int bus, minutes, seconds, time, interval;
     float speed;
+    traffic_light(&interval);
+    speed_vehicle(&speed);
+
     char strings_plural[2][8] = {"minutes", "seconds"};
     char strings_singular[2][8] = {"minute", "second"};
-    printf("Enter speed (km/h): ");
-    scanf(" %f", &speed);
-    speed /= 3.6;
-    printf("Converted to m/s. You entered: %2.3f\n", speed);
-
     time = (int)distance / speed;
     minutes = time / (int)MINUTE;
     seconds = fmod(time, MINUTE);
@@ -25,36 +31,36 @@ int main (void){
         printf("The travel time is: %d %s.\n", seconds,
         (seconds > 1) ? strings_plural[1] : strings_singular[1]);
     }
-
     else if (seconds == 0){
         printf("The travel time is: %d %s. \n", minutes, 
         (minutes > 1) ? strings_plural[0] : strings_singular[0]);
     }
-
-    
     else{
         printf("The travel time is: %d %s and %d %s. \n", 
         minutes, (minutes > 1) ? strings_plural[0] : strings_singular[0],
         seconds, (seconds > 1) ? strings_plural[1] : strings_singular[1]);
     }
 
-    traffic_light();
+}
 
-    return EXIT_SUCCESS;
-}   
-
-int traffic_light(void){
+void traffic_light(int *temp_interval){
     char answer;
-    int interval = 0, temp;
     printf("Do you want traffic lights to be implemented? (y/n): ");
-    scanf(" %c", &answer);
+    while(answer != 'y' || answer != 'n')
+        scanf(" %c", &answer);
     if(answer == 'y'){
         printf("\nHow long should the intervals be in seconds? Round number only: ");
-        scanf(" %d", &temp);
-        interval = temp;
-    }
-    else if(answer == 'n')
-        interval = 0;
-    
-    return interval;
+        scanf(" %d", &temp_interval);
+    } else if(answer == 'n')
+        printf("\nTraffic lights will not be implemented");
 }
+
+int speed_vehicle(float *vehicle_speed){
+    float speed;
+    printf("Enter speed (km/h): ");
+    scanf(" %f", &speed);
+    speed /= 3.6;
+    printf("Converted to m/s. You entered: %2.3f\n", speed);
+    return speed;
+}
+
