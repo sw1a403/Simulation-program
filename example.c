@@ -4,7 +4,9 @@
 #include <time.h>
 #define distance 1000
 #define MINUTE 60
-/* hej */ 
+
+int traffic_light();
+
 int main (void){
     int bus, minutes, seconds, time;
     float speed;
@@ -35,6 +37,9 @@ int main (void){
         minutes, (minutes > 1) ? strings_plural[0] : strings_singular[0],
         seconds, (seconds > 1) ? strings_plural[1] : strings_singular[1]);
     }
+
+    traffic_light();
+
     return EXIT_SUCCESS;
 }   
 
@@ -42,10 +47,10 @@ int traffic_light(){
     char answer;
     int interval;
     printf("Do you want traffic lights to be implemented? (y/n): ");
-    scanf(" %c", answer);
+    scanf(" %c", &answer);
     if(answer == 'y'){
         printf("\nHow long should the intervals be in seconds? Round number only: ");
-        scanf(" %d", interval);
+        scanf(" %d", &interval);
         return interval;
     } else if(answer == 'n')
         return 0;
