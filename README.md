@@ -11,3 +11,8 @@ The user will be able to input different factors that will affect the travel tim
 
 This way we are able to simulate what affects the travel time of a bus on Jyllandsgade most, and indicate what may reduce the travel time.
 
+
+# How to use the program.
+
+To use this program you will need to download the source code and compile main.c. You will need a C compiler like MinGW found at: http://www.mingw.org/ to compile this program. 
+
