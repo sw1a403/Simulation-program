@@ -42,11 +42,12 @@ int traffic_light(){
     char answer;
     int interval;
     printf("Do you want traffic lights to be implemented? (y/n): ");
-    scanf(" %c", answer);
+    scanf(" %c", &answer);
     if(answer == 'y'){
         printf("\nHow long should the intervals be in seconds? Round number only: ");
-        scanf(" %d", interval);
+        scanf(" %d", &interval);
         return interval;
     } else if(answer == 'n')
         return 0;
 }
+
