@@ -19,7 +19,7 @@ void simulate_one_bus(){
     int bus, minutes, seconds, time, interval;
     float speed;
     traffic_light(&interval);
-    speed_vehicle(&speed);
+    speed = speed_vehicle(&speed);
 
     char strings_plural[2][8] = {"minutes", "seconds"};
     char strings_singular[2][8] = {"minute", "second"};
