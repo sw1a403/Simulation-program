@@ -5,6 +5,8 @@
 #define distance 1000
 #define MINUTE 60
 
+int traffic_light();
+
 int main (void){
     int bus, minutes, seconds, time;
     float speed;
@@ -35,6 +37,9 @@ int main (void){
         minutes, (minutes > 1) ? strings_plural[0] : strings_singular[0],
         seconds, (seconds > 1) ? strings_plural[1] : strings_singular[1]);
     }
+
+    traffic_light();
+
     return EXIT_SUCCESS;
 }   
 
