@@ -43,15 +43,18 @@ int main (void){
     return EXIT_SUCCESS;
 }   
 
-int traffic_light(){
+int traffic_light(void){
     char answer;
-    int interval;
+    int interval = 0, temp;
     printf("Do you want traffic lights to be implemented? (y/n): ");
     scanf(" %c", &answer);
     if(answer == 'y'){
         printf("\nHow long should the intervals be in seconds? Round number only: ");
-        scanf(" %d", &interval);
-        return interval;
-    } else if(answer == 'n')
-        return 0;
+        scanf(" %d", &temp);
+        interval = temp;
+    }
+    else if(answer == 'n')
+        interval = 0;
+    
+    return interval;
 }
