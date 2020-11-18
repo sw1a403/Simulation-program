@@ -28,7 +28,6 @@ int main (void){
         printf("The travel time is: %d %s. \n", minutes, 
         (minutes > 1) ? strings_plural[0] : strings_singular[0]);
     }
-
     
     else{
         printf("The travel time is: %d %s and %d %s. \n", 
