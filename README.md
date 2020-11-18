@@ -3,11 +3,17 @@ This is our simulation program for Jyllandsgade in Aalborg. The purpose of this 
 
 The user will be able to input different factors that will affect the travel time. The following user inputs are possible:
 
-* Speed
+* Max speed of the motor vehicles and bus in km/h.
 * Is there traffic lights on the road?
 * Amount of traffic lights on the road and timing interval.
 * Is there other motor vehicles on the road?
 * Amount of other motor vehicles on the road if there is any.
+
+The following factors are static in this simulation program:
+
+* Road length set to 1000m
+* Constant acceleration from 0 to max speed in 0 seconds.
+* Max amount of traffic lights limited to 5 on the road. 
 
 This way we are able to simulate what affects the travel time of a bus on Jyllandsgade most, and indicate what may reduce the travel time.
 
