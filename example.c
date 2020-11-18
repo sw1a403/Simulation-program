@@ -6,7 +6,7 @@
 #define MINUTE 60
 
 int main (void){
-    int minutes, seconds, time;
+    int bus, minutes, seconds, time;
     float speed;
     char strings_plural[2][8] = {"minutes", "seconds"};
     char strings_singular[2][8] = {"minute", "second"};
@@ -28,6 +28,7 @@ int main (void){
         printf("The travel time is: %d %s. \n", minutes, 
         (minutes > 1) ? strings_plural[0] : strings_singular[0]);
     }
+
     
     else{
         printf("The travel time is: %d %s and %d %s. \n", 
@@ -36,3 +37,16 @@ int main (void){
     }
     return EXIT_SUCCESS;
 }   
+
+int traffic_light(){
+    char answer;
+    int interval;
+    printf("Do you want traffic lights to be implemented? (y/n): ");
+    scanf(" %c", answer);
+    if(answer == 'y'){
+        printf("\nHow long should the intervals be in seconds? Round number only: ");
+        scanf(" %d", interval);
+        return interval;
+    } else if(answer == 'n')
+        return 0;
+}
