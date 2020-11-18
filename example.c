@@ -8,7 +8,7 @@
 void simulate_one_bus();
 void speed_vehicle(float *vehicle_speed);
 void traffic_light(int *temp_interval);
-int calculate_travel_time(int light_interval, float speed);
+void calculate_travel_time(int light_interval, float speed);
 
 int main (void){
     simulate_one_bus(); 
@@ -16,6 +16,7 @@ int main (void){
 }   
 
 void simulate_one_bus(){
+    int dif_distance_
     int bus, interval;
     float speed;
     traffic_light(&interval);
@@ -23,24 +24,13 @@ void simulate_one_bus(){
     calculate_travel_time(interval, speed);
 }
 
-    time = (int)distance / speed;
-    minutes = (int)time / MINUTE;
-    seconds = (int)fmod(time, MINUTE);
-
-    if(minutes == 0){
-        printf("The travel time is: %d %s.\n", seconds,
-        (seconds > 1) ? strings_plural[1] : strings_singular[1]);
-    }
-    else if(seconds == 0){
-        printf("The travel time is: %d %s. \n", minutes, 
-        (minutes > 1) ? strings_plural[0] : strings_singular[0]);
-    }
-    else{
-        printf("The travel time is: %d %s and %d %s. \n", 
-        minutes, (minutes > 1) ? strings_plural[0] : strings_singular[0],
-        seconds, (seconds > 1) ? strings_plural[1] : strings_singular[1]);
-    }
-
+void speed_vehicle(float *vehicle_speed){
+    float temp;
+    printf("Enter speed (km/h): ");
+    scanf(" %f", &temp);
+    temp /= 3.6;
+    *vehicle_speed = temp;
+    printf("Converted to m/s. You entered: %2.3f\n", *vehicle_speed);
 }
 
 void traffic_light(int *temp_interval){
@@ -59,7 +49,7 @@ void traffic_light(int *temp_interval){
         printf("\nTraffic lights will not be implemented");
 }
 
-int calculate_travel_time(int light_interval, float speed){
+void calculate_travel_time(int light_interval, float speed){
     int minutes, seconds, time;
     char strings_plural[2][8] = {"minutes", "seconds"};
     char strings_singular[2][8] = {"minute", "second"};
