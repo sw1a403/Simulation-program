@@ -4,7 +4,7 @@
 #include <time.h>
 #define distance 1000
 #define MINUTE 60
-/* hej */ 
+
 int main (void){
     int bus, minutes, seconds, time;
     float speed;
