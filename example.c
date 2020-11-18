@@ -2,13 +2,12 @@
 #include <stdlib.h>
 #include <math.h>
 #include <time.h>
-#define distance 1000
 #define MINUTE 60
 
 void simulate_one_bus();
 void speed_vehicle(float *vehicle_speed);
 void traffic_light(int *temp_interval);
-void calculate_travel_time(int light_interval, float speed);
+void calculate_travel_time(int light_interval, float speed, int dif_dist_intersec[6]);
 
 int main (void){
     simulate_one_bus(); 
@@ -16,12 +15,12 @@ int main (void){
 }   
 
 void simulate_one_bus(){
-    int dif_distance_;
+    int dif_dist_intersec[6] = {29, 88, 315, 318, 201, 49};
     int bus, interval;
     float speed;
     traffic_light(&interval);
     speed_vehicle(&speed);
-    calculate_travel_time(interval, speed);
+    calculate_travel_time(interval, speed, dif_dist_intersec);
 }
 
 void speed_vehicle(float *vehicle_speed){
@@ -49,23 +48,41 @@ void traffic_light(int *temp_interval){
         printf("\nTraffic lights will not be implemented");
 }
 
-void calculate_travel_time(int light_interval, float speed){
-    int minutes, seconds, time;
+void calculate_travel_time(int light_interval, float speed, int dif_dist_intersec[6]){
+    int minutes, seconds, time, i, distance, total_time = 0, total_distance = 0;
     char strings_plural[2][8] = {"minutes", "seconds"};
     char strings_singular[2][8] = {"minute", "second"};
 
-    time = (int)distance / speed;
-    minutes = (int)time / MINUTE;
-    seconds = (int)fmod(time, MINUTE);
-
+    for(i = 0; i <= 5; i++){
+        distance = dif_dist_intersec[i];
+        total_distance += distance;
+        time = (int)distance / speed;
+        total_time += time;
+        minutes = (int)time / MINUTE;
+        seconds = (int)fmod(time, MINUTE);     
+        if(minutes == 0){
+            printf("The bus reached intersection [%d] after %d %s.\n", (i + 1), seconds,
+            (seconds > 1) ? strings_plural[1] : strings_singular[1]);
+        } else if(seconds == 0){
+            printf("The bus reached intersection [%d] after %d %s.\n", (i + 1), minutes, 
+            (minutes > 1) ? strings_plural[0] : strings_singular[0]);
+        } else{
+            printf("The bus reached intersection [%d] after %d %s and %d %s.\n", (i + 1),
+            minutes, (minutes > 1) ? strings_plural[0] : strings_singular[0],
+            seconds, (seconds > 1) ? strings_plural[1] : strings_singular[1]);
+        }
+    }
+    total_time = (int)total_distance / speed;
+    minutes = (int)total_time / MINUTE;
+    seconds = (int)fmod(total_time, MINUTE);     
     if(minutes == 0){
-        printf("The travel time is: %d %s.\n", seconds,
+        printf("The bus reached the end of the course after %d %s.\n", seconds,
         (seconds > 1) ? strings_plural[1] : strings_singular[1]);
     } else if(seconds == 0){
-        printf("The travel time is: %d %s. \n", minutes, 
+        printf("The bus reached the end of the course after %d %s.\n", minutes, 
         (minutes > 1) ? strings_plural[0] : strings_singular[0]);
     } else{
-        printf("The travel time is: %d %s and %d %s. \n", 
+        printf("The bus reached the end of the course after %d %s and %d %s.\n", 
         minutes, (minutes > 1) ? strings_plural[0] : strings_singular[0],
         seconds, (seconds > 1) ? strings_plural[1] : strings_singular[1]);
     }
