@@ -28,11 +28,11 @@ void simulate_one_bus(){
     minutes = (int)time / MINUTE;
     seconds = (int)fmod(time, MINUTE);
 
-    if (minutes == 0){
+    if(minutes == 0){
         printf("The travel time is: %d %s.\n", seconds,
         (seconds > 1) ? strings_plural[1] : strings_singular[1]);
     }
-    else if (seconds == 0){
+    else if(seconds == 0){
         printf("The travel time is: %d %s. \n", minutes, 
         (minutes > 1) ? strings_plural[0] : strings_singular[0]);
     }
