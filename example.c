@@ -7,11 +7,10 @@
 
 void simulate_one_bus();
 void traffic_light(int *temp_interval);
-int speed_vehicle();
+void speed_vehicle(float *vehicle_speed);
 
 int main (void){
-    simulate_one_bus();
-    
+    simulate_one_bus(); 
     return EXIT_SUCCESS;
 }   
 
@@ -46,8 +45,11 @@ void simulate_one_bus(){
 void traffic_light(int *temp_interval){
     char answer;
     printf("Do you want traffic lights to be implemented? (y/n): ");
-    while(answer != 'y' || answer != 'n')
+    scanf(" %c", &answer);
+    while(answer != 'y' || answer != 'n'){
         scanf(" %c", &answer);
+        answer = '/n';
+    }
     if(answer == 'y'){
         printf("\nHow long should the intervals be in seconds? Round number only: ");
         scanf(" %d", &temp_interval);
@@ -55,12 +57,10 @@ void traffic_light(int *temp_interval){
         printf("\nTraffic lights will not be implemented");
 }
 
-int speed_vehicle(float *vehicle_speed){
-    float speed;
+void speed_vehicle(float *vehicle_speed){
     printf("Enter speed (km/h): ");
-    scanf(" %f", &speed);
-    speed /= 3.6;
-    printf("Converted to m/s. You entered: %2.3f\n", speed);
-    return speed;
+    scanf(" %f", &vehicle_speed);
+    vehicle_speed /= 3.6;
+    printf("Converted to m/s. You entered: %2.3f\n", vehicle_speed);
 }
 
