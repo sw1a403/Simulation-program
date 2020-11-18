@@ -6,7 +6,7 @@
 #define MINUTE 60
 
 int main (void){
-    int bus, minutes, seconds, time;
+    int minutes, seconds, time;
     float speed;
     char strings_plural[2][8] = {"minutes", "seconds"};
     char strings_singular[2][8] = {"minute", "second"};
