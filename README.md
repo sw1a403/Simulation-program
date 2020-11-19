@@ -22,7 +22,10 @@ This way we are able to simulate what affects the travel time of a bus on Jyllan
 
 To use this program you will need to download the source code and compile main.c. You will need a C compiler like MinGW GCC found at: http://www.mingw.org/ to compile this program. 
 
-After compiling the program and running it you will be prompted to type in the follow user inputs:
+After compiling the program and running it you will be prompted to type in the follow user inputs: (Subject to change.)
 
+* Max speed of the motor vehicles and bus in km/h will be converted to m/s.
+* Do you want to use traffic light during the simulation?
+  * If yes what timing intervals will the traffic light use in seconds.
 
 
