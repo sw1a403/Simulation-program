@@ -13,7 +13,7 @@ The following factors are static in this simulation program:
 
 * Road length set to 1000m
 * Constant acceleration from 0 to max speed in 0 seconds.
-* Max amount of traffic lights limited to 5 in the simulation program. 
+* Amount of traffic lights set to 5 in the simulation program. 
 
 This way we are able to simulate what affects the travel time of a bus on Jyllandsgade most, and indicate what may reduce the travel time.
 
