@@ -20,8 +20,8 @@ void simulate_one_bus(){
     int dif_dist_intersec[6] = {29, 88, 315, 318, 201, 49};
     int bus, interval;
     float speed;
-    traffic_light(&interval);
     speed_vehicle(&speed);
+    traffic_light(&interval);
     calculate_travel_time(interval, speed, dif_dist_intersec);
 }
 
