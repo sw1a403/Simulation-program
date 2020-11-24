@@ -51,7 +51,7 @@ void traffic_light(int *temp_interval){
 }
 
 void calculate_travel_time(int light_interval, float speed, int dif_dist_intersec[6]){
-    int time, round, distance, total_time = 0, total_distance = 0, 
+    int time, round, distance, total_time = 0,
         time_added_round = 0, total_time_added = 0;
     for(round = 0; round <= 5; round++){
         distance = dif_dist_intersec[round];
@@ -114,7 +114,7 @@ void print_time_intersec(int time, int total_time, int time_added_round, int tot
                 seconds, (seconds > 1) ? strings_plural[1] : strings_singular[1]);
             }
         }
-    } else {
+    } else{
         minutes = (int)total_time / MINUTE;
         seconds = (int)fmod(total_time, MINUTE);     
         if(minutes == 0){
