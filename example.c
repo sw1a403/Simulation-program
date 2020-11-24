@@ -94,11 +94,11 @@ void calculate_travel_time(int light_interval, float speed, int dif_dist_interse
 void calculate_travel_time(int light_interval, float speed, int dif_dist_intersec[6]){
     int time, round, distance, total_time = 0, *inflow, vehicles, i, j,
         time_through_intersec, intersec_dist = 20, vehicles_in_front,
-        temp_time_added_round = 0,
+        temp_time_added_round = 0, time_next_intersec,
         time_added_round = 0, total_time_added = 0;
     int multiple_intersec_arrays[6][50];
     inflow = traffic_inflow(&vehicles);
-    for(i = 0; i <= 6; i++){
+    for(i = 0; i < 6; i++){
         for(j = 0; j <= vehicles; j++){
             multiple_intersec_arrays[0][j] = inflow[j];
             if(i != 0)
@@ -106,26 +106,34 @@ void calculate_travel_time(int light_interval, float speed, int dif_dist_interse
         }
     }
     for(round = 0; round <= 5; round++){
-        distance = dif_dist_intersec[round];
-        time = (int)distance / speed;
+        time = (int)dif_dist_intersec[round] / speed;
         total_time += time;
+        j = 0;
         for(i = 0; i < vehicles; i++){
-            multiple_intersec_arrays[round + 1][i] = multiple_intersec_arrays[round][i];
-            time_through_intersec = (int)intersec_dist / speed;
-            temp_time_added_round += time_added_round;
-            total_time += time_through_intersec;
-            time += time_through_intersec;
-            time_added_round = light_green_or_red(total_time, light_interval);
-            total_time += time_added_round;
-            if(time_added_round > 0){
-                vehicles_in_front = vehicles - (i + 1);
-                if(vehicles_in_front == 0)
-                    printf("\nThe traffic light is red, but the bus is in the front.");
-                else
-                    printf("\nThere is a red light. There are %d vehicles in front of the bus."
-                           "\nThe bus waited for %d seconds", vehicles_in_front, time_added_round);
+            if(multiple_intersec_arrays[round][i] != 0){
+                multiple_intersec_arrays[round][i] = multiple_intersec_arrays[round + 1][i];  
+                time_through_intersec = (int)intersec_dist / speed;
+                total_time += time_through_intersec;
+                time += time_through_intersec;
+                time_added_round = light_green_or_red(total_time, light_interval);
+                time_next_intersec = (int)dif_dist_intersec[round + 1] / speed + total_time;
+                if(multiple_intersec_arrays[round + 1][j] != 0 && light_green_or_red(time_next_intersec, light_interval) == 0){
+                    multiple_intersec_arrays[round + 2][j] = multiple_intersec_arrays[round + 1][j];
+                    j++;
+                }
+                time += time_added_round;
+                total_time += time_added_round;
+                temp_time_added_round += time_added_round;
+                temp_time_added_round += time_through_intersec;
+                if(time_added_round > 0){
+                    vehicles_in_front = vehicles - (i + 1);
+                    if(vehicles_in_front == 0)
+                        printf("\nThe traffic light is red, but the bus is in the front.");
+                    else
+                        printf("\nThere is a red light. There are %d vehicles in front of the bus."
+                            "\nTime before %d green light", vehicles_in_front, time_added_round);
+                }
             }
-            temp_time_added_round += time_through_intersec;
         }
         total_time_added += temp_time_added_round;
         print_time_intersec(time, total_time, temp_time_added_round, total_time_added, round); 
@@ -133,54 +141,6 @@ void calculate_travel_time(int light_interval, float speed, int dif_dist_interse
     }
     print_time_intersec(time, total_time, temp_time_added_round, total_time_added, round);
 }
-/*
-void calculate_travel_time(int light_interval, float speed, int dif_dist_intersec[6]){
-    int time, round, distance, total_time = 0, *inflow, vehicles, i, j,
-        time_through_intersec, intersec_dist = 20, vehicles_in_front,
-        temp_time_added_round = 0, time_next_intersec,
-        time_added_round = 0, total_time_added = 0;
-    int multiple_intersec_arrays[6][50];
-    inflow = traffic_inflow(&vehicles);
-    for(i = 0; i <= 6; i++){
-            for(j = 0; j <= vehicles; j++){
-                multiple_intersec_arrays[0][j] = inflow[j];
-                if(i != 0)
-                    multiple_intersec_arrays[i][j] = 0;
-            }
-    }
-    for(round = 0; round <= 5; round++){
-        distance = dif_dist_intersec[round];
-        time = (int)distance / speed;
-        total_time += time;
-        
-        for(i = 0; i < vehicles; i++){
-            if(multiple_intersec_arrays[round][i] == 1 || multiple_intersec_arrays[round][i] == 2){
-                multiple_intersec_arrays[round][i] = multiple_intersec_arrays[round + 1][i];  
-                time_through_intersec = (int)intersec_dist / speed;
-                temp_time_added_round += time_added_round;
-                total_time += time_through_intersec;
-                time += time_through_intersec;
-                time_added_round = light_green_or_red(total_time, light_interval);
-                if(time_added_round == 0 && multiple_intersec_arrays[round + 1][i] == 1)
-                    multiple_intersec_arrays[round + 2][i] = multiple_intersec_arrays[round + 1][i];
-                total_time += time_added_round;
-                if(time_added_round > 0){
-                    vehicles_in_front = vehicles - (i + 1);
-                    if(vehicles_in_front == 0)
-                        printf("\nThe traffic light is red, but the bus is in the front.");
-                    else
-                        printf("\nThere is a red light. There are %d vehicles in front of the bus."
-                            "\nThe bus waited for %d seconds", vehicles_in_front, time_added_round);
-                }
-                temp_time_added_round += time_through_intersec;
-            }
-        }
-        total_time_added += temp_time_added_round;
-        print_time_intersec(time, total_time, temp_time_added_round, total_time_added, round); 
-        temp_time_added_round = 0;
-    }
-    print_time_intersec(time, total_time, temp_time_added_round, total_time_added, round);
-}*/
 
 int *traffic_inflow(int *vehicles){
     int temp, i, *array;
