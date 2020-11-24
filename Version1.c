@@ -18,7 +18,7 @@ int main (void){
 
 void simulate_one_bus(){
     int dif_dist_intersec[6] = {29, 88, 315, 318, 201, 49};
-    int bus, interval;
+    int interval;
     float speed;
     speed_vehicle(&speed);
     traffic_light(&interval);
@@ -51,7 +51,7 @@ void traffic_light(int *temp_interval){
 }
 
 void calculate_travel_time(int light_interval, float speed, int dif_dist_intersec[6]){
-    int time, round, distance, total_time = 0, total_distance = 0, 
+    int time, round, distance, total_time = 0, 
         time_added_round = 0, total_time_added = 0;
     for(round = 0; round <= 5; round++){
         distance = dif_dist_intersec[round];
