@@ -8,6 +8,7 @@ void simulate_one_bus();
 void speed_vehicle(float *vehicle_speed);
 void traffic_light(int *temp_interval);
 void calculate_travel_time(int light_interval, float speed, int dif_dist_intersec[6]);
+int *traffic_inflow(int *vehicles);
 int light_green_or_red(int total_time, int light_interval);
 void print_time_intersec(int time, int total_time, int time_added_round, int total_time_added, int round);
 
@@ -18,7 +19,7 @@ int main (void){
 
 void simulate_one_bus(){
     int dif_dist_intersec[6] = {29, 88, 315, 318, 201, 49};
-    int bus, interval;
+    int interval;
     float speed;
     speed_vehicle(&speed);
     traffic_light(&interval);
@@ -47,22 +48,76 @@ void traffic_light(int *temp_interval){
         *temp_interval = temp;
     }
     else if(answer == 'n')
-        printf("\nTraffic lights will not be implemented\n");
+        printf("\nTraffic lights will not be implemented.");
 }
 
 void calculate_travel_time(int light_interval, float speed, int dif_dist_intersec[6]){
-    int time, round, distance, total_time = 0,
-        time_added_round = 0, total_time_added = 0;
+    int time, round, distance, total_time = 0, *inflow, vehicles, i, 
+        time_through_intersec, intersec_dist = 20, vehicles_in_front,
+        temp_time_added_round = 0,
+        time_added_round = 0, total_time_added = 0, first_intersec[50];
+    inflow = traffic_inflow(&vehicles);
     for(round = 0; round <= 5; round++){
         distance = dif_dist_intersec[round];
         time = (int)distance / speed;
         total_time += time;
-        time_added_round = light_green_or_red(total_time, light_interval); 
-        total_time_added += time_added_round;
-        print_time_intersec(time, total_time, time_added_round, total_time_added, round); 
+        for(i = 0; i < vehicles; i++){
+            if(round % 2 == 1)
+                first_intersec[i] = inflow[i];
+            else if(round % 2 == 0)
+                inflow[i] = first_intersec[i];
+            time_through_intersec = (int)intersec_dist / speed;
+            total_time += time_through_intersec;
+            time += time_through_intersec;
+            time_added_round = light_green_or_red(total_time, light_interval);
+            if(inflow[i] == 2){
+                time_added_round += time_through_intersec;
+                temp_time_added_round += time_added_round;
+                total_time += time_added_round;
+            } else if(time_added_round > 0 && inflow[i] != 2){
+                time_added_round += time_through_intersec;
+                temp_time_added_round += time_added_round;
+                total_time += time_added_round;
+                vehicles_in_front = vehicles - (i + 1);
+                if(vehicles_in_front == 0)
+                    printf("\nThe traffic light is red, but the bus is in the front.");
+                else
+                    printf("\nThere is a red light. There are %d vehicles in front of the bus."
+                           "\nThe bus waited for %d seconds", vehicles_in_front, time_added_round);
+            }
+        }
+        total_time_added += temp_time_added_round;
+        print_time_intersec(time, total_time, temp_time_added_round, total_time_added, round); 
+        temp_time_added_round = 0;
     }
-    total_time += total_time_added;
-    print_time_intersec(time, total_time, time_added_round, total_time_added, round);
+    print_time_intersec(time, total_time, temp_time_added_round, total_time_added, round);
+}
+
+int *traffic_inflow(int *vehicles){
+    int temp, i, *array;
+    char answer;
+    while(answer != 'y' && answer != 'n'){
+        printf("\nDo you want inflow? These will be the vehicles before the bus. (y/n): ");
+        scanf(" %c", &answer);
+    }
+    if(answer == 'y'){
+        printf("\nHow many vehicles would you like? (int only, max 50): ");
+        scanf(" %d", &temp);
+        *vehicles = temp;
+        array = (int*)malloc(temp * sizeof(int));
+        for(i = 0; i < temp; i++){
+            array[i] = 1;
+            if((i + 1) == temp)
+                array[i] = 2;
+        }
+    }
+    else if(answer == 'n'){
+        printf("\nThere will be no other vehicles than the bus.");
+        array = (int*)malloc(sizeof(int));
+        *vehicles = 1;
+        array[0] = 2;
+    }
+    return array;
 }
 
 int light_green_or_red(int total_time, int light_interval){
@@ -89,13 +144,13 @@ void print_time_intersec(int time, int total_time, int time_added_round, int tot
     seconds = (int)fmod(time, MINUTE);
     if(round <= 5){
         if(minutes == 0){
-            printf("The bus reached intersection [%d] after %d %s.\n", (round + 1), seconds,
+            printf("\nThe bus reached intersection [%d] after %d %s.", (round + 1), seconds,
             (seconds > 1) ? strings_plural[1] : strings_singular[1]);
         } else if(seconds == 0){
-            printf("The bus reached intersection [%d] after %d %s.\n", (round + 1), minutes, 
+            printf("\nThe bus reached intersection [%d] after %d %s.", (round + 1), minutes, 
             (minutes > 1) ? strings_plural[0] : strings_singular[0]);
         } else{
-            printf("The bus reached intersection [%d] after %d %s and %d %s.\n", (round + 1),
+            printf("\nThe bus reached intersection [%d] after %d %s and %d %s.", (round + 1),
             minutes, (minutes > 1) ? strings_plural[0] : strings_singular[0],
             seconds, (seconds > 1) ? strings_plural[1] : strings_singular[1]);
         }
@@ -103,13 +158,13 @@ void print_time_intersec(int time, int total_time, int time_added_round, int tot
         seconds = (int)fmod(time_added_round, MINUTE);
         if(time_added_round > 0){
             if(minutes == 0){
-                printf("\nAt intersection [%d] there were red light and the bus waited for %d %s.\n\n", (round + 1), seconds,
+                printf("\n\nAt intersection [%d] there were red light and the bus waited for %d %s.\n", (round + 1), seconds,
                 (seconds > 1) ? strings_plural[1] : strings_singular[1]);
             } else if(seconds == 0){
-                printf("\nAt intersection [%d] there were red light and the bus waited for %d %s.\n\n", (round + 1), minutes, 
+                printf("\n\nAt intersection [%d] there were red light and the bus waited for %d %s.\n", (round + 1), minutes, 
                 (minutes > 1) ? strings_plural[0] : strings_singular[0]);
             } else{
-                printf("\nAt intersection [%d] there were red light and the bus waited for %d %s and %d %s.\n\n", (round + 1),
+                printf("\n\nAt intersection [%d] there were red light and the bus waited for %d %s and %d %s.\n", (round + 1),
                 minutes, (minutes > 1) ? strings_plural[0] : strings_singular[0],
                 seconds, (seconds > 1) ? strings_plural[1] : strings_singular[1]);
             }
@@ -118,26 +173,26 @@ void print_time_intersec(int time, int total_time, int time_added_round, int tot
         minutes = (int)total_time / MINUTE;
         seconds = (int)fmod(total_time, MINUTE);     
         if(minutes == 0){
-            printf("The bus reached the end of the course after %d %s.\n", seconds,
+            printf("\nThe bus reached the end of the course after %d %s.", seconds,
             (seconds > 1) ? strings_plural[1] : strings_singular[1]);
         } else if(seconds == 0){
-            printf("The bus reached the end of the course after %d %s.\n", minutes, 
+            printf("\nThe bus reached the end of the course after %d %s.", minutes, 
             (minutes > 1) ? strings_plural[0] : strings_singular[0]);
         } else{
-            printf("The bus reached the end of the course after %d %s and %d %s.\n", 
+            printf("\nThe bus reached the end of the course after %d %s and %d %s.", 
             minutes, (minutes > 1) ? strings_plural[0] : strings_singular[0],
             seconds, (seconds > 1) ? strings_plural[1] : strings_singular[1]);
         }
         minutes = (int)total_time_added / MINUTE;
         seconds = (int)fmod(total_time_added, MINUTE);
         if(minutes == 0){
-            printf("Total time spend at red light were %d %s.\n", seconds,
+            printf("\nTotal time spend at red light were %d %s.\n", seconds,
             (seconds > 1) ? strings_plural[1] : strings_singular[1]);
         } else if(seconds == 0){
-            printf("Total time spend at red light were %d %s.\n",  minutes, 
+            printf("\nTotal time spend at red light were %d %s.\n",  minutes, 
             (minutes > 1) ? strings_plural[0] : strings_singular[0]);
         } else{
-            printf("Total time spend at red light were %d %s and %d %s.\n",
+            printf("\nTotal time spend at red light were %d %s and %d %s.\n",
             minutes, (minutes > 1) ? strings_plural[0] : strings_singular[0],
             seconds, (seconds > 1) ? strings_plural[1] : strings_singular[1]);
         }
