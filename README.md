@@ -4,9 +4,9 @@ This is our simulation program for Jyllandsgade in Aalborg. The purpose of this 
 The user will be able to input different factors that will affect the simulation program. The following user inputs are possible:
 
 * Max speed of the motor vehicles and bus in km/h.
-* Is there traffic lights on the road?
+* Are there traffic lights on the road?
 * Amount of traffic lights on the road and timing interval.
-* Is there other motor vehicles on the road?
+* Are there other motor vehicles on the road?
 * Amount of other motor vehicles on the road if there is any.
 
 The following factors are static in this simulation program:
