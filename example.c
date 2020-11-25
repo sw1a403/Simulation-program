@@ -108,6 +108,7 @@ void calculate_travel_time(int light_interval, float speed, int dif_dist_interse
     for(round = 0; round <= 5; round++){
         time = (int)dif_dist_intersec[round] / speed;
         total_time += time;
+        temp_time_added_round = 0;
         j = 0;
         for(i = 0; i < vehicles; i++){
             if(multiple_intersec_arrays[round][i] != 0){
@@ -121,7 +122,6 @@ void calculate_travel_time(int light_interval, float speed, int dif_dist_interse
                     multiple_intersec_arrays[round + 2][j] = multiple_intersec_arrays[round + 1][j];
                     j++;
                 }
-                time += time_added_round;
                 total_time += time_added_round;
                 temp_time_added_round += time_added_round;
                 temp_time_added_round += time_through_intersec;
@@ -137,7 +137,6 @@ void calculate_travel_time(int light_interval, float speed, int dif_dist_interse
         }
         total_time_added += temp_time_added_round;
         print_time_intersec(time, total_time, temp_time_added_round, total_time_added, round); 
-        temp_time_added_round = 0;
     }
     print_time_intersec(time, total_time, temp_time_added_round, total_time_added, round);
 }
