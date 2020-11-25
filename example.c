@@ -121,7 +121,7 @@ void calculate_travel_time(int light_interval, float speed, int dif_dist_interse
                         printf("\nThe traffic light is red, but the bus is in the front.");
                     else
                         printf("\nThere is a red light. There are %d vehicles in front of the bus."
-                            "\nTime before green light %d", vehicles_in_front, time_added_round);
+                               "\nTime before green light %d", vehicles_in_front, time_added_round);
                 }
             }
         }
