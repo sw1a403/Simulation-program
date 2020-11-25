@@ -56,14 +56,14 @@ void calculate_travel_time(int light_interval, float speed, int dif_dist_interse
     int time, round, distance, total_time = 0, *inflow, vehicles, i, j, k,
         vehicles_in_front, temp_time_added_round = 0, time_next_intersec,
         time_added_round = 0, total_time_added = 0, amount_lanes = 1, place = 0,
-        multiple_intersec_arrays[3][6][100], vehicle_rest;
+        intersec_arrays[3][6][100], vehicle_rest;
     float intersec_dist = 10, time_through_intersec;
     inflow = traffic_inflow(&vehicles);
     amount_lanes = more_lanes();
     if(amount_lanes != 1){
         for(i = 0; i < vehicles; i++){
             for(j = 0; j < amount_lanes; j++){
-                multiple_intersec_arrays[j][0][place] = inflow[i];
+                intersec_arrays[j][0][place] = inflow[i];
                 i++;
                 if(i >= vehicles)
                     break;
@@ -78,14 +78,14 @@ void calculate_travel_time(int light_interval, float speed, int dif_dist_interse
         else 
             printf("\nThe vehicles split into the %d different lanes,"
                 "\nthere is %d vehicles in each lane", amount_lanes, vehicles);
-    } else
-        for(i = 0; i < 3; i++)
-            for(j = 0; j < vehicles; j++)
-                multiple_intersec_arrays[i][0][j] = inflow[j];
+    }                
     for(i = 0; i < 3; i++)
         for(j = 1; j < 6; j++)
-            for(k = 0; k < vehicles; k++)
-                multiple_intersec_arrays[i][j][k] = 0;
+            for(k = 0; k < vehicles; k++){
+                intersec_arrays[i][j][k] = 0;
+                if(amount_lanes == 1)
+                    intersec_arrays[i][0][j] = inflow[j];
+            }
     for(round = 0; round <= 5; round++){
         time = (int)dif_dist_intersec[round] / speed;
         total_time += time;
@@ -94,8 +94,8 @@ void calculate_travel_time(int light_interval, float speed, int dif_dist_interse
         for(i = 0; i < vehicles; i++){
             if(round == 5)
                 break;
-            if(multiple_intersec_arrays[0][round][i] != 0){
-                multiple_intersec_arrays[0][round + 1][i] = multiple_intersec_arrays[0][round][i];  
+            if(intersec_arrays[0][round][i] != 0){
+                intersec_arrays[0][round + 1][i] = intersec_arrays[0][round][i];  
                 if(time_through_intersec > 1){
                     time++;
                     total_time++;
@@ -105,11 +105,11 @@ void calculate_travel_time(int light_interval, float speed, int dif_dist_interse
                     time_through_intersec = intersec_dist / speed + time_through_intersec;
                 time_added_round = light_green_or_red(total_time, light_interval);
                 time_next_intersec = (int)dif_dist_intersec[round + 1] / speed + total_time;
-                if(multiple_intersec_arrays[0][round + 1][j] != 0 && light_green_or_red(time_next_intersec, light_interval) == 0){
-                    multiple_intersec_arrays[0][round + 2][j] = multiple_intersec_arrays[0][round + 1][j];
+                if(intersec_arrays[0][round + 1][j] != 0 && light_green_or_red(time_next_intersec, light_interval) == 0){
+                    intersec_arrays[0][round + 2][j] = intersec_arrays[0][round + 1][j];
                     j++;
-                }else if(multiple_intersec_arrays[0][round + 2][j] != 0 && light_green_or_red(time_next_intersec, light_interval) == 0){
-                    multiple_intersec_arrays[0][round + 3][j] = multiple_intersec_arrays[0][round + 2][j];
+                }else if(intersec_arrays[0][round + 2][j] != 0 && light_green_or_red(time_next_intersec, light_interval) == 0){
+                    intersec_arrays[0][round + 3][j] = intersec_arrays[0][round + 2][j];
                     j++;
                 }
                 time += time_added_round;
