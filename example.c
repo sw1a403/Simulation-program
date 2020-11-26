@@ -165,8 +165,8 @@ int *traffic_inflow(int *vehicles){
 }
 
 int more_lanes(){
-    int lanes;
-    char answer, answer_two;
+    int lanes = 0;
+    char answer;
     while(answer != 'y' && answer != 'n'){
         printf("\nDo you want more than one lane? (y/n): ");
         scanf(" %c", &answer);
