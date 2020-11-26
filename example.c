@@ -47,8 +47,8 @@ int traffic_light(){
         scanf(" %c", &answer);
     }
     if(answer == 'y'){
-        printf("\nHow long should the intervals be in seconds? Must be between 1 & 60 (int only): ");
-        while(temp < 1 || temp > 60)
+        printf("\nHow long should the intervals be in seconds? Must be between 10 & 60 (int only): ");
+        while(temp < 10 || temp > 60)
             scanf(" %d", &temp);
     }
     else if(answer == 'n'){
