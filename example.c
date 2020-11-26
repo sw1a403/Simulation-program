@@ -48,15 +48,18 @@ void traffic_light(int *temp_interval){
         scanf(" %d", &temp);
         *temp_interval = temp;
     }
-    else if(answer == 'n')
+    else if(answer == 'n'){
         printf("\nTraffic lights will not be implemented.");
+        temp = 0;
+        *temp_interval = temp;
+    }
 }
 
 void calculate_travel_time(int light_interval, float speed, int dif_dist_intersec[6]){
     int time, round, distance, total_time = 0, *inflow, vehicles, i, j, k,
         vehicles_in_front, temp_time_added_round = 0, time_next_intersec,
         time_added_round = 0, total_time_added = 0, amount_lanes = 1, place = 0,
-        intersec_arrays[3][6][100], vehicle_rest;
+        intersec_arrays[3][6][100], vehicle_rest, vehicles_in_front[6];
     float intersec_dist = 10, time_through_intersec;
     inflow = traffic_inflow(&vehicles);
     amount_lanes = more_lanes();
@@ -102,21 +105,23 @@ void calculate_travel_time(int light_interval, float speed, int dif_dist_interse
                     temp_time_added_round++;
                     time_through_intersec = 0;
                 } else
-                    time_through_intersec = intersec_dist / speed + time_through_intersec;
-                time_added_round = light_green_or_red(total_time, light_interval);
+                    time_through_intersec += intersec_dist / speed;
+                time_added_round = 0;
+                if(light_interval != 0)
+                    time_added_round = light_green_or_red(total_time, light_interval);
                 time_next_intersec = (int)dif_dist_intersec[round + 1] / speed + total_time;
                 if(intersec_arrays[0][round + 1][j] != 0 && light_green_or_red(time_next_intersec, light_interval) == 0){
                     intersec_arrays[0][round + 2][j] = intersec_arrays[0][round + 1][j];
                     j++;
-                }else if(intersec_arrays[0][round + 2][j] != 0 && light_green_or_red(time_next_intersec, light_interval) == 0){
-                    intersec_arrays[0][round + 3][j] = intersec_arrays[0][round + 2][j];
-                    j++;
+                }else if(intersec_arrays[0][round + 2][k] != 0 && light_green_or_red(time_next_intersec, light_interval) == 0){
+                    intersec_arrays[0][round + 3][k] = intersec_arrays[0][round + 2][k];
+                    k++;
                 }
                 time += time_added_round;
                 total_time += time_added_round;
                 temp_time_added_round += time_added_round;
                 if(time_added_round > 0){
-                    vehicles_in_front = vehicles - (i + 1);
+                    vehicles_in_front = vehicles - (i + 1) - j;
                     if(vehicles_in_front == 0)
                         printf("\nThe traffic light is red, but the bus is in the front.");
                     else
