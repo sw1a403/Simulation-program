@@ -93,6 +93,7 @@ void calculate_travel_time(int light_interval, float speed, int dif_dist_interse
         total_time += time;
         temp_time_added_round = 0;
         j = 0;
+        k = 0;
         for(i = 0; i < vehicles; i++){
             if(round == 5)
                 break;
