@@ -11,7 +11,9 @@ void calculate_travel_time(int light_interval, float speed, int dif_dist_interse
 int *traffic_inflow(int *vehicles);
 int more_lanes();
 int light_green_or_red(int total_time, int light_interval);
+int ac_dec_celeration(float speed, int *dif_dist_intersec[6], int round, int *ac_dec_time);
 void print_time_intersec(int time, int total_time, int time_added_round, int total_time_added, int round);
+
 
 int main (void){
     simulate_one_bus(); 
@@ -29,8 +31,9 @@ void simulate_one_bus(){
 
 void speed_vehicle(float *vehicle_speed){
     float temp;
-    printf("Enter speed (km/h): ");
-    scanf(" %f", &temp);
+    printf("Enter speed (km/h). Can't be slower than 1, or faster than 80: ");
+    while(temp < 1 || temp > 80)
+        scanf(" %f", &temp);
     temp /= 3.6;
     *vehicle_speed = temp;
     printf("Converted to m/s. You entered: %2.3f\n", *vehicle_speed);
@@ -59,7 +62,7 @@ void calculate_travel_time(int light_interval, float speed, int dif_dist_interse
     int time, round, distance, total_time = 0, *inflow, vehicles, i, j, k,
         vehicles_in_front, temp_time_added_round = 0, time_next_intersec,
         time_added_round = 0, total_time_added = 0, amount_lanes = 1, place = 0,
-        intersec_arrays[3][6][100], vehicle_rest;
+        intersec_arrays[3][6][100], vehicle_rest, ac_dec_time = 0, to_short;
     float intersec_dist = 10, time_through_intersec;
     inflow = traffic_inflow(&vehicles);
     amount_lanes = more_lanes();
@@ -90,14 +93,17 @@ void calculate_travel_time(int light_interval, float speed, int dif_dist_interse
                     intersec_arrays[i][0][j] = inflow[j];
             }
     for(round = 0; round <= 5; round++){
-        time = (int)dif_dist_intersec[round] / speed;
+        if(round == 5)
+            time = ac_dec_time;
+        else{
+            time = (int)dif_dist_intersec[round] / speed + ac_dec_time;
+            to_short = ac_dec_celeration(speed, &dif_dist_intersec, round, &ac_dec_time);
+        }
         total_time += time;
         temp_time_added_round = 0;
         j = 0;
         k = 0;
         for(i = 0; i < vehicles; i++){
-            if(round == 5)
-                break;
             if(intersec_arrays[0][round][i] != 0){
                 intersec_arrays[0][round + 1][i] = intersec_arrays[0][round][i];  
                 if(time_through_intersec > 1){
@@ -111,30 +117,38 @@ void calculate_travel_time(int light_interval, float speed, int dif_dist_interse
                     time_added_round = 0;
                 else{
                     time_added_round = light_green_or_red(total_time, light_interval);
-                    time_next_intersec = (int)dif_dist_intersec[round + 1] / speed + total_time;
+                    time_next_intersec = (int)dif_dist_intersec[round + 1] / speed + total_time + ac_dec_time;
                     if(intersec_arrays[0][round + 1][j] != 0 && light_green_or_red(time_next_intersec, light_interval) == 0){
                         intersec_arrays[0][round + 2][j] = intersec_arrays[0][round + 1][j];
                         j++;
                     }else if(intersec_arrays[0][round + 2][k] != 0 && light_green_or_red(time_next_intersec, light_interval) == 0){
                         intersec_arrays[0][round + 3][k] = intersec_arrays[0][round + 2][k];
                         k++;
+                    }                
+                    if(time_added_round > 1){
+                        temp_time_added_round += time_added_round;
+                        time_added_round += ac_dec_time; 
+                        vehicles_in_front = vehicles - (i + 1);
+                        if(vehicles_in_front == 0)
+                            printf("\nThe traffic light is red, but the bus is in the front.");
+                        else
+                            printf("\nThere is a red light. There are %d vehicles in front of the bus."
+                                   "\nTime before green light %d", vehicles_in_front, time_added_round);
+                        time += time_added_round;
+                        total_time += time_added_round;
                     }
-                    time += time_added_round;
-                    total_time += time_added_round;
-                    temp_time_added_round += time_added_round;
-                }
-                if(time_added_round > 1){
-                    vehicles_in_front = vehicles - (i + 1);
-                    if(vehicles_in_front == 0)
-                        printf("\nThe traffic light is red, but the bus is in the front.");
-                    else
-                        printf("\nThere is a red light. There are %d vehicles in front of the bus."
-                               "\nTime before green light %d", vehicles_in_front, time_added_round);
                 }
             }
-        }
+        }       
         total_time_added += temp_time_added_round;
         print_time_intersec(time, total_time, temp_time_added_round, total_time_added, round); 
+        if(temp_time_added_round > 1){
+            if(to_short == 1)
+                printf("\nAfter intersection [%d] the bus didn't accelerate to full speed,"
+                       "\nThe added time is %d\n", round + 1, ac_dec_time);
+            else
+                printf("\nTime added for acceleration and decceleration is %d\n", ac_dec_time);   
+        }    
     }
     print_time_intersec(time, total_time, temp_time_added_round, total_time_added, round);
 }
@@ -204,6 +218,28 @@ int light_green_or_red(int total_time, int light_interval){
     return time_added;
 }
 
+int ac_dec_celeration(float speed, int *dif_dist_intersec[6], int round, int *ac_dec_time){
+    const double acceleration = 1.4, decceleration = -3.2;
+    int ac_time, dec_time, ac_dist, to_short = 0, temp;
+    ac_time = (int)speed / acceleration;
+    ac_dist = 0.5 * acceleration * pow(ac_time, 2);
+    printf("\ntest 1");
+    temp = *dif_dist_intersec[round + 1];
+    if(ac_dist >= temp){
+        ac_time = (int)sqrt(*dif_dist_intersec[round + 1] / (0.5 * acceleration));
+        to_short = 1;
+        printf("\ntest 2");
+    } else{
+        dif_dist_intersec[round + 1] -= ac_dist;
+        printf("\ntest 3");
+        }
+        printf("\ntest 4");
+    dec_time = (int)-speed / decceleration;
+    temp = ac_time + dec_time;
+    *ac_dec_time = temp;
+    return to_short;
+}
+
 void print_time_intersec(int time, int total_time, int time_added_round, int total_time_added, int round){
     int minutes, seconds;
     char strings_plural[2][8] = {"minutes", "seconds"};
@@ -224,18 +260,20 @@ void print_time_intersec(int time, int total_time, int time_added_round, int tot
                 seconds, (seconds > 1) ? strings_plural[1] : strings_singular[1]);
             }
         }
-        minutes = (int)time / MINUTE;
-        seconds = (int)fmod(time, MINUTE);
-        if(minutes == 0){
-            printf("\nThe bus reached intersection [%d] after %d %s.\n", (round + 1), seconds,
-            (seconds > 1) ? strings_plural[1] : strings_singular[1]);
-        } else if(seconds == 0){
-            printf("\nThe bus reached intersection [%d] after %d %s.\n", (round + 1), minutes, 
-            (minutes > 1) ? strings_plural[0] : strings_singular[0]);
-        } else{
-            printf("\nThe bus reached intersection [%d] after %d %s and %d %s.\n", (round + 1),
-            minutes, (minutes > 1) ? strings_plural[0] : strings_singular[0],
-            seconds, (seconds > 1) ? strings_plural[1] : strings_singular[1]);
+        if(round < 4){
+            minutes = (int)time / MINUTE;
+            seconds = (int)fmod(time, MINUTE);
+            if(minutes == 0){
+                printf("\nThe bus reached intersection [%d] after %d %s.\n", (round + 1), seconds,
+                (seconds > 1) ? strings_plural[1] : strings_singular[1]);
+            } else if(seconds == 0){
+                printf("\nThe bus reached intersection [%d] after %d %s.\n", (round + 1), minutes, 
+                (minutes > 1) ? strings_plural[0] : strings_singular[0]);
+            } else{
+                printf("\nThe bus reached intersection [%d] after %d %s and %d %s.\n", (round + 1),
+                minutes, (minutes > 1) ? strings_plural[0] : strings_singular[0],
+                seconds, (seconds > 1) ? strings_plural[1] : strings_singular[1]);
+            }
         }
     } else if(round == 6){
         minutes = (int)time / MINUTE;
