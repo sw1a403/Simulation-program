@@ -36,7 +36,7 @@ void speed_vehicle(float *vehicle_speed){
     printf("Converted to m/s. You entered: %2.3f\n", *vehicle_speed);
 }
 
-void traffic_light(){
+int traffic_light(){
     int temp;
     char answer;
     while(answer != 'y' && answer != 'n'){
