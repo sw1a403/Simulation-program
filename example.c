@@ -11,7 +11,7 @@ void calculate_travel_time(int light_interval, float speed, int dif_dist_interse
 int *traffic_inflow(int *vehicles);
 int more_lanes();
 int light_green_or_red(int total_time, int light_interval);
-int ac_dec_celeration(float speed, int *dif_dist_intersec[6], int round, int *ac_dec_time);
+int ac_dec_celeration(float speed, int dif_dist_intersec[6], int round, int *ac_dec_time, int *to_short);
 void print_time_intersec(int time, int total_time, int time_added_round, int total_time_added, int round);
 
 
@@ -97,7 +97,7 @@ void calculate_travel_time(int light_interval, float speed, int dif_dist_interse
             time = ac_dec_time;
         else{
             time = (int)dif_dist_intersec[round] / speed + ac_dec_time;
-            to_short = ac_dec_celeration(speed, &dif_dist_intersec, round, &ac_dec_time);
+            dif_dist_intersec[round + 1] = ac_dec_celeration(speed, dif_dist_intersec, round, &ac_dec_time, &to_short);
         }
         total_time += time;
         temp_time_added_round = 0;
@@ -218,26 +218,22 @@ int light_green_or_red(int total_time, int light_interval){
     return time_added;
 }
 
-int ac_dec_celeration(float speed, int *dif_dist_intersec[6], int round, int *ac_dec_time){
+int ac_dec_celeration(float speed, int dif_dist_intersec[6], int round, int *ac_dec_time, int *to_short){
     const double acceleration = 1.4, decceleration = -3.2;
-    int ac_time, dec_time, ac_dist, to_short = 0, temp;
+    int ac_time, dec_time, ac_dist, temp;
     ac_time = (int)speed / acceleration;
     ac_dist = 0.5 * acceleration * pow(ac_time, 2);
-    printf("\ntest 1");
-    temp = *dif_dist_intersec[round + 1];
-    if(ac_dist >= temp){
-        ac_time = (int)sqrt(*dif_dist_intersec[round + 1] / (0.5 * acceleration));
-        to_short = 1;
-        printf("\ntest 2");
+    if(ac_dist >= dif_dist_intersec[round + 1]){
+        ac_time = (int)sqrt(dif_dist_intersec[round + 1] / (0.5 * acceleration));
+        *to_short = 1;
     } else{
         dif_dist_intersec[round + 1] -= ac_dist;
-        printf("\ntest 3");
-        }
-        printf("\ntest 4");
+        *to_short = 0;
+    }
     dec_time = (int)-speed / decceleration;
     temp = ac_time + dec_time;
     *ac_dec_time = temp;
-    return to_short;
+    return dif_dist_intersec[round + 1];
 }
 
 void print_time_intersec(int time, int total_time, int time_added_round, int total_time_added, int round){
