@@ -6,7 +6,7 @@
 
 void simulate_one_bus();
 void speed_vehicle(float *vehicle_speed);
-void traffic_light(int *temp_interval);
+int traffic_light();
 void calculate_travel_time(int light_interval, float speed, int dif_dist_intersec[6]);
 int *traffic_inflow(int *vehicles);
 int more_lanes();
@@ -23,7 +23,7 @@ void simulate_one_bus(){
     int interval;
     float speed;
     speed_vehicle(&speed);
-    traffic_light(&interval);
+    interval = traffic_light();
     calculate_travel_time(interval, speed, dif_dist_intersec);
 }
 
@@ -36,7 +36,7 @@ void speed_vehicle(float *vehicle_speed){
     printf("Converted to m/s. You entered: %2.3f\n", *vehicle_speed);
 }
 
-void traffic_light(int *temp_interval){
+void traffic_light(){
     int temp;
     char answer;
     while(answer != 'y' && answer != 'n'){
@@ -46,13 +46,12 @@ void traffic_light(int *temp_interval){
     if(answer == 'y'){
         printf("\nHow long should the intervals be in seconds? (int only): ");
         scanf(" %d", &temp);
-        *temp_interval = temp;
     }
     else if(answer == 'n'){
         printf("\nTraffic lights will not be implemented.");
         temp = 0;
-        *temp_interval = temp;
     }
+    return temp;
 }
 
 void calculate_travel_time(int light_interval, float speed, int dif_dist_intersec[6]){
