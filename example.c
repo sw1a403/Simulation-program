@@ -37,15 +37,16 @@ void speed_vehicle(float *vehicle_speed){
 }
 
 int traffic_light(){
-    int temp;
+    int temp = 0;
     char answer;
     while(answer != 'y' && answer != 'n'){
         printf("\nDo you want traffic lights to be implemented? (y/n): ");
         scanf(" %c", &answer);
     }
     if(answer == 'y'){
-        printf("\nHow long should the intervals be in seconds? (int only): ");
-        scanf(" %d", &temp);
+        printf("\nHow long should the intervals be in seconds? Must be between 1 & 60 (int only): ");
+        while(temp < 1 || temp > 60)
+            scanf(" %d", &temp);
     }
     else if(answer == 'n'){
         printf("\nTraffic lights will not be implemented.");
@@ -106,22 +107,24 @@ void calculate_travel_time(int light_interval, float speed, int dif_dist_interse
                     time_through_intersec = 0;
                 } else
                     time_through_intersec += intersec_dist / speed;
-                time_added_round = 0;
-                if(light_interval != 0)
+                if(light_interval == 0)
+                    time_added_round = 0;
+                else{
                     time_added_round = light_green_or_red(total_time, light_interval);
-                time_next_intersec = (int)dif_dist_intersec[round + 1] / speed + total_time;
-                if(intersec_arrays[0][round + 1][j] != 0 && light_green_or_red(time_next_intersec, light_interval) == 0){
-                    intersec_arrays[0][round + 2][j] = intersec_arrays[0][round + 1][j];
-                    j++;
-                }else if(intersec_arrays[0][round + 2][k] != 0 && light_green_or_red(time_next_intersec, light_interval) == 0){
-                    intersec_arrays[0][round + 3][k] = intersec_arrays[0][round + 2][k];
-                    k++;
+                    time_next_intersec = (int)dif_dist_intersec[round + 1] / speed + total_time;
+                    if(intersec_arrays[0][round + 1][j] != 0 && light_green_or_red(time_next_intersec, light_interval) == 0){
+                        intersec_arrays[0][round + 2][j] = intersec_arrays[0][round + 1][j];
+                        j++;
+                    }else if(intersec_arrays[0][round + 2][k] != 0 && light_green_or_red(time_next_intersec, light_interval) == 0){
+                        intersec_arrays[0][round + 3][k] = intersec_arrays[0][round + 2][k];
+                        k++;
+                    }
+                    time += time_added_round;
+                    total_time += time_added_round;
+                    temp_time_added_round += time_added_round;
                 }
-                time += time_added_round;
-                total_time += time_added_round;
-                temp_time_added_round += time_added_round;
-                if(time_added_round > 0){
-                    vehicles_in_front = vehicles - (i + 1) - j;
+                if(time_added_round > 1){
+                    vehicles_in_front = vehicles - (i + 1);
                     if(vehicles_in_front == 0)
                         printf("\nThe traffic light is red, but the bus is in the front.");
                     else
@@ -144,10 +147,10 @@ int *traffic_inflow(int *vehicles){
         scanf(" %c", &answer);
     }
     if(answer == 'y'){
-        while(temp < 2 || temp > 100){
-            printf("\nHow many vehicles would you like? (int only, max 100): ");
+        printf("\nHow many vehicles would you like? (int only, max 100): ");
+        while(temp < 2 || temp > 100)
             scanf(" %d", &temp);
-        }
+        
         *vehicles = temp;
         array = (int*)malloc(temp * sizeof(int));
         for(i = 0; i < temp; i++){
@@ -193,13 +196,11 @@ int light_green_or_red(int total_time, int light_interval){
     if(count % 2 == 1)
         time_added = 0;
     else{
-        if(time_until_change == 0 && count % 2 == 0)
-            time_added = 0;
-        else if(time_until_change == 0)
+        if(time_until_change == 0)
             time_added = 1;
         else        
             time_added = light_interval - time_until_change;
-    }
+    }    
     return time_added;
 }
 
