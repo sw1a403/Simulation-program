@@ -59,7 +59,7 @@ void calculate_travel_time(int light_interval, float speed, int dif_dist_interse
     int time, round, distance, total_time = 0, *inflow, vehicles, i, j, k,
         vehicles_in_front, temp_time_added_round = 0, time_next_intersec,
         time_added_round = 0, total_time_added = 0, amount_lanes = 1, place = 0,
-        intersec_arrays[3][6][100], vehicle_rest, vehicles_in_front[6];
+        intersec_arrays[3][6][100], vehicle_rest;
     float intersec_dist = 10, time_through_intersec;
     inflow = traffic_inflow(&vehicles);
     amount_lanes = more_lanes();
