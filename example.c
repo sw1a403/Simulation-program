@@ -59,8 +59,8 @@ int traffic_light(){
 }
 
 void calculate_travel_time(int light_interval, float speed, int dif_dist_intersec[6]){
-    int time, round, distance, total_time = 0, *inflow, vehicles, i, j, k,
-        vehicles_in_front, temp_time_added_round = 0, time_next_intersec,
+    int time, round, distance, total_time = 0, *inflow, vehicles, i, j, k, time_next_intersec,
+        vehicles_in_front, temp_time_added_round = 0,  timer_traffic_light = 0,
         time_added_round = 0, total_time_added = 0, amount_lanes = 1, place = 0,
         intersec_arrays[3][6][100], vehicle_rest, ac_dec_time = 0, to_short;
     float intersec_dist = 10, time_through_intersec;
@@ -84,7 +84,7 @@ void calculate_travel_time(int light_interval, float speed, int dif_dist_interse
         else 
             printf("\nThe vehicles split into the %d different lanes,"
                 "\nthere is %d vehicles in each lane", amount_lanes, vehicles);
-    }                
+    }    
     for(i = 0; i < 3; i++)
         for(j = 1; j < 6; j++)
             for(k = 0; k < vehicles; k++){
@@ -99,7 +99,7 @@ void calculate_travel_time(int light_interval, float speed, int dif_dist_interse
             time = (int)dif_dist_intersec[round] / speed + ac_dec_time;
             dif_dist_intersec[round + 1] = ac_dec_celeration(speed, dif_dist_intersec, round, &ac_dec_time, &to_short);
         }
-        total_time += time;
+        timer_traffic_light += time;
         temp_time_added_round = 0;
         j = 0;
         k = 0;
@@ -108,7 +108,7 @@ void calculate_travel_time(int light_interval, float speed, int dif_dist_interse
                 intersec_arrays[0][round + 1][i] = intersec_arrays[0][round][i];  
                 if(time_through_intersec > 1){
                     time++;
-                    total_time++;
+                    timer_traffic_light++;
                     temp_time_added_round++;
                     time_through_intersec = 0;
                 } else
@@ -116,8 +116,8 @@ void calculate_travel_time(int light_interval, float speed, int dif_dist_interse
                 if(light_interval == 0)
                     time_added_round = 0;
                 else{
-                    time_added_round = light_green_or_red(total_time, light_interval);
-                    time_next_intersec = (int)dif_dist_intersec[round + 1] / speed + total_time + ac_dec_time;
+                    time_added_round = light_green_or_red(timer_traffic_light, light_interval);
+                    time_next_intersec = (int)dif_dist_intersec[round + 1] / speed + timer_traffic_light + ac_dec_time;
                     if(intersec_arrays[0][round + 1][j] != 0 && light_green_or_red(time_next_intersec, light_interval) == 0){
                         intersec_arrays[0][round + 2][j] = intersec_arrays[0][round + 1][j];
                         j++;
@@ -126,23 +126,23 @@ void calculate_travel_time(int light_interval, float speed, int dif_dist_interse
                         k++;
                     }                
                     if(time_added_round > 1){
-                        temp_time_added_round += time_added_round;
-                        time_added_round += ac_dec_time; 
+                        temp_time_added_round += time_added_round; 
                         vehicles_in_front = vehicles - (i + 1);
                         if(vehicles_in_front == 0)
                             printf("\nThe traffic light is red, but the bus is in the front.");
                         else
                             printf("\nThere is a red light. There are %d vehicles in front of the bus."
                                    "\nTime before green light %d", vehicles_in_front, time_added_round);
-                        time += time_added_round;
-                        total_time += time_added_round;
+                        time += time_added_round + ac_dec_time;
+                        timer_traffic_light += time_added_round;
                     }
                 }
             }
-        }       
+        }      
+        total_time += time; 
         total_time_added += temp_time_added_round;
         print_time_intersec(time, total_time, temp_time_added_round, total_time_added, round); 
-        if(temp_time_added_round > 1){
+        if(temp_time_added_round > 1 && round < 4){
             if(to_short == 1)
                 printf("\nAfter intersection [%d] the bus didn't accelerate to full speed,"
                        "\nThe added time is %d\n", round + 1, ac_dec_time);
