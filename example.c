@@ -59,7 +59,7 @@ int traffic_light(){
 }
 
 void calculate_travel_time(int light_interval, float speed, int dif_dist_intersec[6]){
-    int time, round, distance, total_time = 0, *inflow, vehicles, i, j, k, time_next_intersec,
+    int time, round, total_time = 0, *inflow, vehicles, i, j, k, time_next_intersec,
         vehicles_in_front, temp_time_added_round = 0,  timer_traffic_light = 0,
         time_added_round = 0, total_time_added = 0, amount_lanes = 1, place = 0,
         intersec_arrays[3][6][100], vehicle_rest, ac_dec_time = 0, to_short;
@@ -80,10 +80,10 @@ void calculate_travel_time(int light_interval, float speed, int dif_dist_interse
         vehicles = (vehicles - vehicle_rest) / amount_lanes;
         if(vehicle_rest > 0)
             printf("\nThe vehicles split into the %d different lanes,"
-                "\nthere is %d vehicles in one lane and %d in the others", amount_lanes, (vehicles + vehicle_rest), vehicles);
+                   "\nthere is %d vehicles in one lane and %d in the others", amount_lanes, (vehicles + vehicle_rest), vehicles);
         else 
             printf("\nThe vehicles split into the %d different lanes,"
-                "\nthere is %d vehicles in each lane", amount_lanes, vehicles);
+                   "\nthere is %d vehicles in each lane", amount_lanes, vehicles);
     }    
     for(i = 0; i < 3; i++)
         for(j = 1; j < 6; j++)
@@ -237,9 +237,20 @@ int ac_dec_celeration(float speed, int dif_dist_intersec[6], int round, int *ac_
 }
 
 void print_time_intersec(int time, int total_time, int time_added_round, int total_time_added, int round){
-    int minutes, seconds;
+    int minutes, seconds, i, added_time_array[6];
     char strings_plural[2][8] = {"minutes", "seconds"};
     char strings_singular[2][8] = {"minute", "second"};
+    /* added_time_array[round] = time_added_round;
+    if(round == 6){
+        for(i = 0; i <= 4; i++){
+            if(time_added_round > 0){
+                minutes = (int)time_added_round / MINUTE;
+                seconds = (int)fmod(time_added_round, MINUTE);
+            } else()
+    }*/
+    
+
+
     if(round <= 4){
         minutes = (int)time_added_round / MINUTE;
         seconds = (int)fmod(time_added_round, MINUTE);
