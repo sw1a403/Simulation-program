@@ -246,8 +246,11 @@ void print_time_intersec(int time, int total_time, int time_added_round, int tot
             if(time_added_round > 0){
                 minutes = (int)time_added_round / MINUTE;
                 seconds = (int)fmod(time_added_round, MINUTE);
-            } else()
-    }*/
+            } else{
+                minutes = (int)time / MINUTE;
+                seconds = (int)fmod(time, MINUTE);
+            }
+    } */
     
 
 
@@ -267,7 +270,7 @@ void print_time_intersec(int time, int total_time, int time_added_round, int tot
                 seconds, (seconds > 1) ? strings_plural[1] : strings_singular[1]);
             }
         }
-        if(round < 4){
+        if(round <= 4){
             minutes = (int)time / MINUTE;
             seconds = (int)fmod(time, MINUTE);
             if(minutes == 0){
