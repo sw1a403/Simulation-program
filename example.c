@@ -63,7 +63,7 @@ void calculate_travel_time(int light_interval, float speed, int dif_dist_interse
         vehicles_in_front, temp_time_added_round = 0,  timer_traffic_light = 0,
         time_added_round = 0, total_time_added = 0, amount_lanes = 1, place = 0,
         intersec_arrays[3][6][100], vehicle_rest, ac_dec_time = 0, to_short;
-    float intersec_dist = 10, time_through_intersec;
+    float intersec_dist = 10, time_through_intersec = 0;
     inflow = traffic_inflow(&vehicles);
     amount_lanes = more_lanes();
     if(amount_lanes != 1){
@@ -109,16 +109,16 @@ void calculate_travel_time(int light_interval, float speed, int dif_dist_interse
         for(i = 0; i < vehicles; i++){
             if(intersec_arrays[0][round][i] != 0){
                 intersec_arrays[0][round + 1][i] = intersec_arrays[0][round][i];  
-                if(time_through_intersec > 1){
-                    time++;
-                    timer_traffic_light++;
-                    temp_time_added_round++;
-                    time_through_intersec = 0;
-                } else
-                    time_through_intersec += intersec_dist / speed;
                 if(light_interval == 0)
                     time_added_round = 0;
-                else{
+                else if(light_interval != 0){
+                        if(time_through_intersec > 1){
+                        time++;
+                        timer_traffic_light++;
+                        temp_time_added_round++;
+                        time_through_intersec = 0;
+                    } else
+                        time_through_intersec += intersec_dist / speed;
                     time_added_round = light_green_or_red(timer_traffic_light, light_interval);
                     time_next_intersec = (int)dif_dist_intersec[round + 1] / speed + timer_traffic_light + ac_dec_time;
                     if(intersec_arrays[0][round + 1][j] != 0 && light_green_or_red(time_next_intersec, light_interval) == 0){
@@ -159,15 +159,14 @@ void calculate_travel_time(int light_interval, float speed, int dif_dist_interse
 int *traffic_inflow(int *vehicles){
     int temp = 0, i, *array;
     char answer;
-    while(answer != 'y' && answer != 'n'){
-        printf("\nDo you want inflow? These will be the vehicles before the bus. (y/n): ");
+    printf("\nDo you want inflow? These will be the vehicles before the bus. (y/n): ");
+    while(answer != 'y' && answer != 'n')
         scanf(" %c", &answer);
-    }
     if(answer == 'y'){
-        printf("\nHow many vehicles would you like? (int only, max 100): ");
-        while(temp < 2 || temp > 100)
+        printf("\nHow many vehicles would you like? (int only, min 1, max 100): ");
+        while(temp < 1 || temp > 100)
             scanf(" %d", &temp);
-        
+        temp++;
         *vehicles = temp;
         array = (int*)malloc(temp * sizeof(int));
         for(i = 0; i < temp; i++){
@@ -175,8 +174,7 @@ int *traffic_inflow(int *vehicles){
             if((i + 1) == temp)
                 array[i] = 2;
         }
-    }
-    else if(answer == 'n'){
+    } else{
         printf("\nThere will be no other vehicles than the bus.");
         array = (int*)malloc(sizeof(int));
         *vehicles = 1;
@@ -187,38 +185,19 @@ int *traffic_inflow(int *vehicles){
 
 int more_lanes(){
     int lanes = 0;
-    char answer;
-    while(answer != 'y' && answer != 'n'){
-        printf("\nDo you want more than one lane? (y/n): ");
-        scanf(" %c", &answer);
-    }
-    if(answer == 'y'){
-        while(lanes != 2 && lanes != 3){
+    char answer_lanes;
+    printf("\nDo you want more than one lane? (y/n): ");
+    while(answer_lanes != 'y' && answer_lanes != 'n')
+        scanf(" %c", &answer_lanes);
+    if(answer_lanes == 'y'){
         printf("\nDo you want two or three lanes? (int only): ");
-        scanf(" %d", &lanes);
-        }
-    }
-    else if(answer == 'n'){
+        while(lanes != 2 && lanes != 3)
+            scanf(" %d", &lanes);
+    } else if(answer_lanes == 'n'){
         printf("\nThere will only be used one lane.");
         lanes = 1;
     }
     return lanes;
-}
-
-int light_green_or_red(int total_time, int light_interval){
-    int time_until_change = total_time % light_interval, 
-        count = 0, time_added, i;
-    for(i = 0; i < total_time; i += light_interval)
-        count++;
-    if(count % 2 == 1)
-        time_added = 0;
-    else{
-        if(time_until_change == 0)
-            time_added = 1;
-        else        
-            time_added = light_interval - time_until_change;
-    }    
-    return time_added;
 }
 
 int ac_dec_celeration(float speed, int dif_dist_intersec[6], int round, int *ac_dec_time, int *to_short){
@@ -239,24 +218,26 @@ int ac_dec_celeration(float speed, int dif_dist_intersec[6], int round, int *ac_
     return dif_dist_intersec[round + 1];
 }
 
+int light_green_or_red(int total_time, int light_interval){
+    int time_until_change = total_time % light_interval, 
+        count = 0, time_added, i;
+    for(i = 0; i < total_time; i += light_interval)
+        count++;
+    if(count % 2 == 1)
+        time_added = 0;
+    else{
+        if(time_until_change == 0)
+            time_added = 1;
+        else        
+            time_added = light_interval - time_until_change;
+    }    
+    return time_added;
+}
+
 void print_time_intersec(int time, int total_time, int time_added_round, int total_time_added, int round){
-    int minutes, seconds, i, added_time_array[6];
+    int minutes, seconds;
     char strings_plural[2][8] = {"minutes", "seconds"};
     char strings_singular[2][8] = {"minute", "second"};
-    /* added_time_array[round] = time_added_round;
-    if(round == 6){
-        for(i = 0; i <= 4; i++){
-            if(time_added_round > 0){
-                minutes = (int)time_added_round / MINUTE;
-                seconds = (int)fmod(time_added_round, MINUTE);
-            } else{
-                minutes = (int)time / MINUTE;
-                seconds = (int)fmod(time, MINUTE);
-            }
-    } */
-    
-
-
     if(round <= 4){
         minutes = (int)time_added_round / MINUTE;
         seconds = (int)fmod(time_added_round, MINUTE);
