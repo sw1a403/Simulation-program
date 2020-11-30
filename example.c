@@ -93,12 +93,17 @@ void calculate_travel_time(int light_interval, float speed, int dif_dist_interse
                     intersec_arrays[i][0][j] = inflow[j];
             }
     for(round = 0; round <= 5; round++){
-        if(round == 5)
-            time = ac_dec_time;
-        else{
+        if(light_interval != 0){
+            if(round == 5)
+                time = ac_dec_time;
+            else{
+                time = (int)dif_dist_intersec[round] / speed + ac_dec_time;
+                dif_dist_intersec[round + 1] = ac_dec_celeration(speed, dif_dist_intersec, round, &ac_dec_time, &to_short);
+            }
+        } else if(round == 0)
             time = (int)dif_dist_intersec[round] / speed + ac_dec_time;
-            dif_dist_intersec[round + 1] = ac_dec_celeration(speed, dif_dist_intersec, round, &ac_dec_time, &to_short);
-        }
+        else
+            time = (int)dif_dist_intersec[round] / speed;
         timer_traffic_light += time;
         temp_time_added_round = 0;
         j = 0;
