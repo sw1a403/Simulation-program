@@ -100,9 +100,7 @@ void calculate_travel_time(int light_interval, float speed, int dif_dist_interse
                 time = (int)dif_dist_intersec[round] / speed + ac_dec_time;
                 dif_dist_intersec[round + 1] = ac_dec_celeration(speed, dif_dist_intersec, round, &ac_dec_time, &to_short);
             }
-        } else if(round == 0)
-            time = (int)dif_dist_intersec[round] / speed + ac_dec_time;
-        else
+        } else
             time = (int)dif_dist_intersec[round] / speed;
         timer_traffic_light += time;
         temp_time_added_round = 0;
