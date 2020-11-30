@@ -115,7 +115,7 @@ void calculate_travel_time(int light_interval, float speed, int dif_dist_interse
                     temp_time_added_round++;
                     time_through_intersec = 0;
                 } else
-                    time_through_intersec += intersec_dist / speed;
+                    time_through_intersec += (intersec_dist / speed);
                 if(light_interval == 0)
                     time_added_round = 0;
                 else{
@@ -205,22 +205,6 @@ int more_lanes(){
     return lanes;
 }
 
-int light_green_or_red(int total_time, int light_interval){
-    int time_until_change = total_time % light_interval, 
-        count = 0, time_added, i;
-    for(i = 0; i < total_time; i += light_interval)
-        count++;
-    if(count % 2 == 1)
-        time_added = 0;
-    else{
-        if(time_until_change == 0)
-            time_added = 1;
-        else        
-            time_added = light_interval - time_until_change;
-    }    
-    return time_added;
-}
-
 int ac_dec_celeration(float speed, int dif_dist_intersec[6], int round, int *ac_dec_time, int *to_short){
     const double acceleration = 1.4, decceleration = -3.2;
     int ac_time, dec_time, ac_dist, temp;
@@ -239,24 +223,26 @@ int ac_dec_celeration(float speed, int dif_dist_intersec[6], int round, int *ac_
     return dif_dist_intersec[round + 1];
 }
 
+int light_green_or_red(int total_time, int light_interval){
+    int time_until_change = total_time % light_interval, 
+        count = 0, time_added, i;
+    for(i = 0; i < total_time; i += light_interval)
+        count++;
+    if(count % 2 == 1)
+        time_added = 0;
+    else{
+        if(time_until_change == 0)
+            time_added = 1;
+        else        
+            time_added = light_interval - time_until_change;
+    }    
+    return time_added;
+}
+
 void print_time_intersec(int time, int total_time, int time_added_round, int total_time_added, int round){
-    int minutes, seconds, i, added_time_array[6];
+    int minutes, seconds;
     char strings_plural[2][8] = {"minutes", "seconds"};
     char strings_singular[2][8] = {"minute", "second"};
-    /* added_time_array[round] = time_added_round;
-    if(round == 6){
-        for(i = 0; i <= 4; i++){
-            if(time_added_round > 0){
-                minutes = (int)time_added_round / MINUTE;
-                seconds = (int)fmod(time_added_round, MINUTE);
-            } else{
-                minutes = (int)time / MINUTE;
-                seconds = (int)fmod(time, MINUTE);
-            }
-    } */
-    
-
-
     if(round <= 4){
         minutes = (int)time_added_round / MINUTE;
         seconds = (int)fmod(time_added_round, MINUTE);
