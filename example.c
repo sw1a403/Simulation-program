@@ -6,11 +6,11 @@
 
 void simulate_one_bus();
 void speed_vehicle(float *vehicle_speed);
-int traffic_light();
-void calculate_travel_time(int light_interval, float speed, int dif_dist_intersec[6]);
+void traffic_light(int *traffic_light_model, int *traffic_light_interval);
+void calculate_travel_time(float speed, int dif_dist_intersec[6], int traffic_light_model[5], int traffic_light_interval[5]);
 int *traffic_inflow(int *vehicles);
 int more_lanes();
-int light_green_or_red(int total_time, int light_interval);
+int light_green_or_red(int total_time, int traffic_light_interval[5], int traffic_light_model[5], int round);
 int ac_dec_celeration(float speed, int dif_dist_intersec[6], int round, int *ac_dec_time, int *to_short);
 void print_time_intersec(int time, int total_time, int time_added_round, int total_time_added, int round);
 
@@ -22,11 +22,11 @@ int main (void){
 
 void simulate_one_bus(){
     int dif_dist_intersec[6] = {29, 78, 305, 308, 191, 39};
-    int interval;
+    int traffic_light_model[5], traffic_light_interval[5];
     float speed;
     speed_vehicle(&speed);
-    interval = traffic_light();
-    calculate_travel_time(interval, speed, dif_dist_intersec);
+    traffic_light(&traffic_light_model, &traffic_light_interval);
+    calculate_travel_time(speed, dif_dist_intersec, traffic_light_model, traffic_light_interval);
 }
 
 void speed_vehicle(float *vehicle_speed){
@@ -39,26 +39,47 @@ void speed_vehicle(float *vehicle_speed){
     printf("Converted to m/s. You entered: %2.3f\n", *vehicle_speed);
 }
 
-int traffic_light(){
-    int temp = 0;
-    char answer;
-    while(answer != 'y' && answer != 'n'){
-        printf("\nDo you want traffic lights to be implemented? (y/n): ");
+void traffic_light(int *traffic_light_model, int *traffic_light_interval){
+    int temp_model = 0, temp_interval = 0, i;
+    char answer, answer_model, answer_interval;
+    printf("\nDo you want traffic lights to be implemented? (y/n): ");
+    while(answer != 'y' && answer != 'n')
         scanf(" %c", &answer);
-    }
     if(answer == 'y'){
-        printf("\nHow long should the intervals be in seconds? Must be between 10 & 60 (int only): ");
-        while(temp < 10 || temp > 60)
-            scanf(" %d", &temp);
-    }
-    else if(answer == 'n'){
+        printf("\nDo you want the different intersections to have different traffic light models? (y/n): ");
+        while(answer_model != 'y' && answer_model != 'n')
+            scanf(" %c", &answer_model);
+        printf("\nDo you want the different intersections to have different intervals? (y/n): ");
+        while(answer_interval != 'y' && answer_interval != 'n')
+            scanf(" %c", &answer_interval);
+        for(i = 0; i < 5; i++){
+            if(answer_model == 'y')
+                printf("\nWhich traffic light model do you want in intersection[%d]? Answer must be 2, 6 or 8 (int only): ", (i + 1));
+            else if(i == 0)
+                printf("\nWhich traffic light model do you want for the intersections? Answer must be 2, 6 or 8 (int only): ");           
+            while(temp_model != 2 && temp_model != 6 && temp_model != 8)
+                scanf(" %d", &temp_model);
+            traffic_light_model[i] = temp_model;
+            if(answer_model == 'y')
+                temp_model = 0;
+            if(answer_interval == 'y')
+                printf("\nHow long should the intervals for intersection[%d] be in seconds? Must be between 10 & 60 (int only): ", (i + 1));
+            else if(i == 0)
+                printf("\nHow long should the intervals for the intersections be in seconds? Must be between 10 & 60 (int only)");       
+            while(temp_interval < 10 || temp_interval > 60)
+                scanf(" %d", &temp_interval);
+            traffic_light_interval[i] = temp_interval;
+            if(answer_interval == 'y')
+                temp_interval = 0;
+        }
+    } else if(answer == 'n'){
         printf("\nTraffic lights will not be implemented.");
-        temp = 0;
+        for(i = 0; i < 5; i++)
+            traffic_light_interval[i] = 0;
     }
-    return temp;
 }
 
-void calculate_travel_time(int light_interval, float speed, int dif_dist_intersec[6]){
+void calculate_travel_time(float speed, int dif_dist_intersec[6], int traffic_light_model[5], int traffic_light_interval[5]){
     int time, round, total_time = 0, *inflow, vehicles, i, j, k, time_next_intersec,
         vehicles_in_front, temp_time_added_round = 0,  timer_traffic_light = 0,
         time_added_round = 0, total_time_added = 0, amount_lanes = 1, place = 0,
@@ -78,12 +99,15 @@ void calculate_travel_time(int light_interval, float speed, int dif_dist_interse
         }
         vehicle_rest = vehicles % amount_lanes;
         vehicles = (vehicles - vehicle_rest) / amount_lanes;
-        if(vehicle_rest > 0)
-            printf("\nThe vehicles split into the %d different lanes,"
-                   "\nthere is %d vehicles in one lane and %d in the others", amount_lanes, (vehicles + vehicle_rest), vehicles);
-        else 
+        if(vehicle_rest == 0)
             printf("\nThe vehicles split into the %d different lanes,"
                    "\nthere is %d vehicles in each lane", amount_lanes, vehicles);
+        else if(vehicle_rest == 1)
+            printf("\nThe vehicles split into the %d different lanes,"
+                   "\nthere is %d vehicles in one lane and %d in the others", amount_lanes, (vehicles + 1), vehicles);
+        else if(vehicle_rest == 2)
+            printf("\nThe vehicles split into the %d different lanes,"
+                   "\nthere is %d vehicles in two lane and %d in the last one", amount_lanes, (vehicles + 1), vehicles);
     }    
     for(i = 0; i < 3; i++)
         for(j = 1; j < 6; j++)
@@ -93,7 +117,7 @@ void calculate_travel_time(int light_interval, float speed, int dif_dist_interse
                     intersec_arrays[i][0][j] = inflow[j];
             }
     for(round = 0; round <= 5; round++){
-        if(light_interval != 0){
+        if(temp_time_added_round != 0){
             if(round == 5)
                 time = ac_dec_time;
             else{
@@ -109,28 +133,33 @@ void calculate_travel_time(int light_interval, float speed, int dif_dist_interse
         for(i = 0; i < vehicles; i++){
             if(intersec_arrays[0][round][i] != 0){
                 intersec_arrays[0][round + 1][i] = intersec_arrays[0][round][i];  
-                if(light_interval == 0)
+                if(traffic_light_interval[round] == 0){
                     time_added_round = 0;
-                else if(light_interval != 0){
-                        if(time_through_intersec > 1){
+                    if(time_through_intersec > 1 || round == 0){
+                        time++;
+                        time_through_intersec = 0;
+                    } else if(round == 0)
+                        time_through_intersec += intersec_dist / speed;
+                } else if(traffic_light_interval[round] != 0){
+                    if(time_through_intersec > 1){
                         time++;
                         timer_traffic_light++;
                         temp_time_added_round++;
                         time_through_intersec = 0;
                     } else
                         time_through_intersec += intersec_dist / speed;
-                    time_added_round = light_green_or_red(timer_traffic_light, light_interval);
+                    time_added_round = light_green_or_red(timer_traffic_light, traffic_light_interval, traffic_light_model, round);
                     time_next_intersec = (int)dif_dist_intersec[round + 1] / speed + timer_traffic_light + ac_dec_time;
-                    if(intersec_arrays[0][round + 1][j] != 0 && light_green_or_red(time_next_intersec, light_interval) == 0){
+                    if(intersec_arrays[0][round + 1][j] != 0 && light_green_or_red(time_next_intersec, traffic_light_interval, traffic_light_model, round) == 0){
                         intersec_arrays[0][round + 2][j] = intersec_arrays[0][round + 1][j];
                         j++;
-                    }else if(intersec_arrays[0][round + 2][k] != 0 && light_green_or_red(time_next_intersec, light_interval) == 0){
+                    }else if(intersec_arrays[0][round + 2][k] != 0 && light_green_or_red(time_next_intersec, traffic_light_interval, traffic_light_model, round) == 0){
                         intersec_arrays[0][round + 3][k] = intersec_arrays[0][round + 2][k];
                         k++;
                     }                
                     if(time_added_round > 1){
                         temp_time_added_round += time_added_round; 
-                        vehicles_in_front = vehicles - (i + 1);
+                        vehicles_in_front = vehicles - (i + 2);
                         if(vehicles_in_front == 0)
                             printf("\nThe traffic light is red, but the bus is in the front.");
                         else
@@ -141,18 +170,21 @@ void calculate_travel_time(int light_interval, float speed, int dif_dist_interse
                     }
                 }
             }
-        }      
+        }    
         total_time += time; 
         total_time_added += temp_time_added_round;
         print_time_intersec(time, total_time, temp_time_added_round, total_time_added, round); 
-        if(temp_time_added_round > 1 && round < 4){
+        if(temp_time_added_round > 1 && round <= 4 && round != 0){
             if(to_short == 1)
                 printf("\nAfter intersection [%d] the bus didn't accelerate to full speed,"
                        "\nThe added time is %d\n", round + 1, ac_dec_time);
             else
                 printf("\nTime added for acceleration and decceleration is %d\n", ac_dec_time);   
+            printf("test 1");
         }    
+        printf("test 2");
     }
+    printf("test 3");
     print_time_intersec(time, total_time, temp_time_added_round, total_time_added, round);
 }
 
@@ -218,18 +250,26 @@ int ac_dec_celeration(float speed, int dif_dist_intersec[6], int round, int *ac_
     return dif_dist_intersec[round + 1];
 }
 
-int light_green_or_red(int total_time, int light_interval){
-    int time_until_change = total_time % light_interval, 
-        count = 0, time_added, i;
-    for(i = 0; i < total_time; i += light_interval)
+int light_green_or_red(int total_time, int traffic_light_interval[5], int traffic_light_model[5], int round){
+    int time_until_change = total_time % traffic_light_interval[round], 
+        count = 0, time_added, i, divisor = 0;
+    switch(traffic_light_model[round]){
+        case 2:
+            divisor = 2; break;
+        case 6:
+            divisor = 3; break;
+        case 8:
+            divisor = 4; break;
+    }
+    for(i = 0; i < total_time; i += traffic_light_interval[round])
         count++;
-    if(count % 2 == 1)
+    if(count % divisor == 1)
         time_added = 0;
     else{
         if(time_until_change == 0)
             time_added = 1;
         else        
-            time_added = light_interval - time_until_change;
+            time_added = traffic_light_interval[round] - time_until_change;
     }    
     return time_added;
 }
