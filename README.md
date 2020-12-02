@@ -33,7 +33,7 @@ After compiling the program and running it you will be prompted to type in the f
 * Do you want other motor vehicles in front of the bus being simulated?
   * If yes how many motor vehicles with a minimum of 2 and a maximum of 100.
 * Do you want more than one lane?
-  * If yes do you want two or three lanes for the simulation. (Note this will distrubite the user inputted other motor vehicles to more than one lane.)
+  * If yes do you want two or three lanes for the simulation. (Note this distribute the user inputted more motor vehicles to more than one lane.)
  
 
 
