@@ -158,14 +158,9 @@ void calculate_travel_time(float speed, int dif_dist_intersec[6], int traffic_li
             for(i = 0; i < vehicles; i++){
                 if(intersec_arrays[0][round][i] != 0){
                     intersec_arrays[0][round + 1][i] = intersec_arrays[0][round][i];  
-                    if(traffic_light_interval[round] == 0){
+                    if(traffic_light_interval[round] == 0)
                         time_added_round = 0;
-                        if(time_through_intersec > 1 || round == 0){
-                            time++;
-                            time_through_intersec = 0;
-                        } else if(round == 0)
-                            time_through_intersec += intersec_dist / speed;
-                    } else if(traffic_light_interval[round] != 0){
+                    else if(traffic_light_interval[round] != 0){
                         if(time_through_intersec > 1){
                             time++;
                             timer_traffic_light++;
@@ -204,7 +199,7 @@ void calculate_travel_time(float speed, int dif_dist_intersec[6], int traffic_li
                 printf("\nAfter intersection [%d] the bus didn't accelerate to full speed,"
                        "\nThe added time is %d\n", round + 1, ac_dec_time);
             else
-                printf("\nTime added for acceleration and decceleration is %d\n", ac_dec_time);   
+                printf("\nTime added for acceleration is %d\n", ac_dec_time);   
         }    
     }
     print_time_intersec(time, total_time, temp_time_added_round, total_time_added, round);
@@ -256,7 +251,7 @@ int more_lanes(){
 
 int ac_dec_celeration(float speed, int dif_dist_intersec[6], int round, int *ac_dec_time, int *to_short){
     const double acceleration = 1.4, decceleration = -3.2;
-    int ac_time, dec_time, ac_dist, temp;
+    int ac_time, ac_dist;
     ac_time = (int)speed / acceleration;
     ac_dist = 0.5 * acceleration * pow(ac_time, 2);
     if(ac_dist >= dif_dist_intersec[round + 1]){
@@ -266,9 +261,7 @@ int ac_dec_celeration(float speed, int dif_dist_intersec[6], int round, int *ac_
         dif_dist_intersec[round + 1] -= ac_dist;
         *to_short = 0;
     }
-    dec_time = (int)-speed / decceleration;
-    temp = ac_time + dec_time;
-    *ac_dec_time = temp;
+    *ac_dec_time = ac_time;
     return dif_dist_intersec[round + 1];
 }
 
