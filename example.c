@@ -39,7 +39,7 @@ void speed_vehicle(float *vehicle_speed){
     printf("Converted to m/s. You entered: %2.3f\n", *vehicle_speed);
 }
 
-void traffic_light(int *traffic_light_model, int *traffic_light_interval){
+void traffic_light(int *traffic_light_model[5], int *traffic_light_interval[5]){
     int temp_model = 0, temp_interval = 0, i;
     char answer, answer_model, answer_interval;
     printf("\nDo you want traffic lights to be implemented? (y/n): ");
