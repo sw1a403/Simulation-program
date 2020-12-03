@@ -26,7 +26,7 @@ void simulate_one_bus(){
     int dif_dist_intersec[6] = {29, 78, 305, 308, 191, 39};
     int *traffic_light_model, *traffic_light_interval;
     float speed;
-    int answer_model = 0, answer_interval = 0, i;
+    int answer_model = 0, answer_interval = 0;
     speed_vehicle(&speed);
     traffic_light(&answer_model, &answer_interval);
     traffic_light_model = traffic_model(answer_model);
@@ -45,7 +45,6 @@ void speed_vehicle(float *vehicle_speed){
 }
 
 void traffic_light(int *answer_model, int *answer_interval){
-    int temp_model = 0, temp_interval = 0, i;
     char answer, temp_answer_model, temp_answer_interval;
     printf("\nDo you want traffic lights to be implemented? (y/n): ");
     while(answer != 'y' && answer != 'n')
