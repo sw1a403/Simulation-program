@@ -161,13 +161,6 @@ void calculate_travel_time(float speed, int dif_dist_intersec[6], int traffic_li
                     if(traffic_light_interval[round] == 0)
                         time_added_round = 0;
                     else if(traffic_light_interval[round] != 0){
-                        if(time_through_intersec > 1){
-                            time++;
-                            timer_traffic_light++;
-                            temp_time_added_round++;
-                            time_through_intersec = 0;
-                        } else
-                            time_through_intersec += intersec_dist / speed;
                         time_added_round = light_green_or_red(timer_traffic_light, traffic_light_interval, traffic_light_model, round);
                         time_next_intersec = (int)dif_dist_intersec[round + 1] / speed + timer_traffic_light + ac_dec_time;
                         if(intersec_arrays[0][round + 1][j] != 0 && light_green_or_red(time_next_intersec, traffic_light_interval, traffic_light_model, round) == 0){
@@ -187,6 +180,14 @@ void calculate_travel_time(float speed, int dif_dist_intersec[6], int traffic_li
                                     "\nTime before green light %d", vehicles_in_front, time_added_round);
                             time += time_added_round + ac_dec_time;
                             timer_traffic_light += time_added_round;
+                        } else{
+                            if(time_through_intersec > 1){
+                                time++;
+                                timer_traffic_light++;
+                                temp_time_added_round++;
+                                time_through_intersec = 0;
+                            } else
+                                time_through_intersec += intersec_dist / speed;
                         }
                     }
                 }
