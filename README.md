@@ -31,7 +31,7 @@ To use this program you will need to download the source code and compile main.c
 
 After compiling the program and running it you will be prompted to type in the follow user inputs:
 
-* Max speed of the motor vehicles and bus in km/h minimum of 10 km/h and maximum of 60 km/h.
+* Max speed of the motor vehicles and bus minimum of 10 km/h and maximum of 60 km/h.
 * Are there traffic lights on the road?
   * If yes do you want different traffic light models:
     * If yes what traffic light model for each intersection choose between 2, 6 or 8.
