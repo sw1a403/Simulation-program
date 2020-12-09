@@ -212,10 +212,10 @@ void calculate_travel_time(float speed, int dif_dist_intersec[6], int traffic_li
         print_time_intersec(time, total_time, temp_time_added_round, total_time_added, round);   
         if(temp_time_added_round > 1 && round <= 4 && round != 0){
             if(to_short == 1){
-                printf("\nAfter intersection[%d] the bus didn't accelerate to full speed,"
-                       "\nThe added time is %d seconds", round + 1, ac_dec_time);
                 if(round == 5)
                     time = ac_dec_time;
+                printf("\nAfter intersection[%d] the bus didn't accelerate to full speed,"
+                       "\nThe added time is %d seconds", round + 1, ac_dec_time);
             } else
                 printf("\nTime added for acceleration is %d seconds", ac_dec_time);  
         }  
