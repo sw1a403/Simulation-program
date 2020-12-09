@@ -138,7 +138,7 @@ void calculate_travel_time(float speed, int dif_dist_intersec[6], int traffic_li
             for(k = 0; k < vehicles; k++){
                 intersec_arrays[i][j][k] = 0;
                 if(amount_lanes == 1)
-                    intersec_arrays[i][0][j] = inflow[j];
+                    intersec_arrays[0][0][k] = inflow[k];
             }
     for(round = 0; round <= 5; round++){
         if(temp_time_added_round != 0){
@@ -149,72 +149,76 @@ void calculate_travel_time(float speed, int dif_dist_intersec[6], int traffic_li
         } else
             time = (int)dif_dist_intersec[round] / speed;
         timer_traffic_light += time;
-        temp_time_added_round = 0;
-        for(i = 0; i < 4; i++)
-            time_added_round[i] = 0;
-        for(i = 0; i < vehicles; i++){
-            if(intersec_arrays[0][round][i] != 0){
-                if(traffic_light_interval[round] == 0){
-                    intersec_arrays[0][round + 1][i] = intersec_arrays[0][round][i];
-                    intersec_arrays[0][round][i] = 0;
-                } else if(traffic_light_interval[round] != 0){
+        temp_time_added_round = 0; 
+        for(i = 0; i < 5; i++) 
+            time_added_round[i] = 0; 
+        for(i = 0; i < vehicles; i++){ 
+            if(intersec_arrays[0][round][i] != 0){ 
+                if(traffic_light_interval[round] == 0){ 
+                    intersec_arrays[0][round + 1][i] = intersec_arrays[0][round][i]; 
+                    intersec_arrays[0][round][i] = 0; 
+                } else if(traffic_light_interval[round] > 0){
                     if(time_added_round[round] > 0){
                         timer_traffic_light++;
                         time++;
-                        time_added_round[round]--;
-                    } else{
-                        intersec_arrays[0][round + 1][i] = intersec_arrays[0][round][i]; 
-                        intersec_arrays[0][round][i] = 0;
+                        time_added_round[round]--; 
+                        i--;
+                    } else{ 
+                        intersec_arrays[0][round + 1][i] = intersec_arrays[0][round][i];  
+                        intersec_arrays[0][round][i] = 0; 
                         time_added_round[round] = light_green_or_red(timer_traffic_light, traffic_light_interval, traffic_light_model, round); 
-                        for(intersec_nr = round + 1; intersec_nr < 4; intersec_nr++){
-                            for(j = 0; j < i; j++){
-                                if(intersec_arrays[0][intersec_nr][j] != 0){
-                                    if(traffic_light_interval[intersec_nr] == 0){
-                                        intersec_arrays[0][intersec_nr + 1][j] = intersec_arrays[0][intersec_nr][j];
-                                        intersec_arrays[0][intersec_nr][j] = 0;
-                                    } else{
-                                        time_next_intersec = (int)dif_dist_intersec[intersec_nr] / speed + timer_traffic_light + ac_dec_time;
+                        for(intersec_nr = round + 1; intersec_nr < 4; intersec_nr++){ 
+                            for(j = 0; j < i; j++){ 
+                                if(intersec_arrays[0][intersec_nr][j] == 1){ 
+                                    if(traffic_light_interval[intersec_nr] == 0){ 
+                                        intersec_arrays[0][intersec_nr + 1][j] = intersec_arrays[0][intersec_nr][j]; 
+                                        intersec_arrays[0][intersec_nr][j] = 0; 
+                                    } else{ 
+                                        time_next_intersec = (int)dif_dist_intersec[intersec_nr] / speed + timer_traffic_light + ac_dec_time; 
                                         time_added_round[intersec_nr] = light_green_or_red(time_next_intersec, traffic_light_interval, traffic_light_model, intersec_nr);
-                                        if(time_added_round[intersec_nr] == 0){
-                                            intersec_arrays[0][intersec_nr + 1][j] = intersec_arrays[0][round][j]; 
-                                            intersec_arrays[0][intersec_nr][j] = 0;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        if(time_through_intersec >= 1){
-                            time++;
-                            timer_traffic_light++;
-                            time_through_intersec = 0;
-                        } else if(time_through_intersec < 1)
-                            time_through_intersec += intersec_dist / speed;
-                        if(time_added_round[round] > 1){ 
+                                        if(time_added_round[intersec_nr] == 0){ 
+                                            intersec_arrays[0][intersec_nr + 1][j] = intersec_arrays[0][round][j];  
+                                            intersec_arrays[0][intersec_nr][j] = 0; 
+                                        } 
+                                    } 
+                                } 
+                            } 
+                        } 
+                        if(time_added_round[round] > 0){ 
                             vehicles_in_front = vehicles - (i + 1);
                             if(vehicles_in_front == 0)
                                 printf("\nThe traffic light is red, but the bus is in the front.");
                             else
                                 printf("\nThere is a red light. There are %d vehicles in front of the bus."
-                                       "\nTime before green light %d seconds", vehicles_in_front, time_added_round[round]);
+                                       "\nTime before green light %d seconds", vehicles_in_front, time_added_round[round]); 
                             time += ac_dec_time + time_added_round[round]; 
                             temp_time_added_round += time_added_round[round];
+                            timer_traffic_light += ac_dec_time + time_added_round[round];
                             dif_dist_intersec[round + 1] = ac_dec_celeration(speed, dif_dist_intersec, round, &ac_dec_time, &to_short);
                         }
                     }
+                    if(time_through_intersec >= 1){ 
+                        time++;
+                        timer_traffic_light++;
+                        time_through_intersec = 0;
+                    } else if(time_through_intersec < 1)
+                        time_through_intersec += intersec_dist / speed;
                 }
             } 
         }             
+        if(round == 5)
+            time = ac_dec_time;
         total_time += time; 
         total_time_added += temp_time_added_round;
+        print_time_intersec(time, total_time, temp_time_added_round, total_time_added, round);   
         if(temp_time_added_round > 1 && round <= 4 && round != 0){
             if(to_short == 1)
                 printf("\nAfter intersection[%d] the bus didn't accelerate to full speed,"
                        "\nThe added time is %d seconds", round + 1, ac_dec_time);
             else
-                printf("\nTime added for acceleration is %d seconds", ac_dec_time);   
-        }
-        print_time_intersec(time, total_time, temp_time_added_round, total_time_added, round);     
-    }   
+                printf("\nTime added for acceleration is %d seconds", ac_dec_time);  
+        }  
+    } 
     print_time_intersec(time, total_time, temp_time_added_round, total_time_added, round);
 }
 
@@ -326,13 +330,13 @@ void print_time_intersec(int time, int total_time, int time_added_round, int tot
             minutes = (int)time / MINUTE;
             seconds = (int)fmod(time, MINUTE);
             if(minutes == 0){
-                printf("\nThe bus reached intersection [%d] after %d %s.\n", (round + 1), seconds,
+                printf("\nThe bus drove through intersection [%d] after %d %s.\n", (round + 1), seconds,
                 (seconds > 1) ? strings_plural[1] : strings_singular[1]);
             } else if(seconds == 0){
-                printf("\nThe bus reached intersection [%d] after %d %s.\n", (round + 1), minutes, 
+                printf("\nThe bus drove through intersection [%d] after %d %s.\n", (round + 1), minutes, 
                 (minutes > 1) ? strings_plural[0] : strings_singular[0]);
             } else{
-                printf("\nThe bus reached intersection [%d] after %d %s and %d %s.\n", (round + 1),
+                printf("\nThe bus drove through intersection [%d] after %d %s and %d %s.\n", (round + 1),
                 minutes, (minutes > 1) ? strings_plural[0] : strings_singular[0],
                 seconds, (seconds > 1) ? strings_plural[1] : strings_singular[1]);
             }
