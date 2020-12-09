@@ -75,9 +75,9 @@ int *traffic_model(int answer_model){
             continue;
         }else if(answer_model == 1){
             temp_model = 0;
-            printf("\nWhich traffic light model do you want in intersection[%d]? Answer must be 2, 6 or 8 (int only): ", (i + 1));
+            printf("\nWhich traffic light model do you want in intersection[%d]? Answer must be 2, 6 or 8 (integer only): ", (i + 1));
         }else if(answer_model == 0 && i == 0)
-            printf("\nWhich traffic light model do you want for the intersections? Answer must be 2, 6 or 8 (int only): ");    
+            printf("\nWhich traffic light model do you want for the intersections? Answer must be 2, 6 or 8 (integer only): ");    
         while(temp_model != 2 && temp_model != 6 && temp_model != 8)
             scanf(" %d", &temp_model);
         traffic_light_model[i] = temp_model;
@@ -93,9 +93,9 @@ int *traffic_interval(int answer_interval){
             continue;
         }else if(answer_interval == 1){
             temp_interval = 0;
-            printf("\nHow long should the intervals for intersection[%d] be in seconds? Must be between 10 & 60 (int only): ", (i + 1));
+            printf("\nHow long should the intervals for intersection[%d] be in seconds? Must be between 10 & 60 (integer only): ", (i + 1));
         } else if(answer_interval == 0 && i == 0)
-            printf("\nHow long should the intervals for the intersections be in seconds? Must be between 10 & 60 (int only): ");       
+            printf("\nHow long should the intervals for the intersections be in seconds? Must be between 10 & 60 (integer only): ");       
         while(temp_interval < 10 || temp_interval > 60)
             scanf(" %d", &temp_interval);
         traffic_light_interval[i] = temp_interval;
@@ -230,7 +230,7 @@ int *traffic_inflow(int *vehicles){
     while(answer != 'y' && answer != 'n')
         scanf(" %c", &answer);
     if(answer == 'y'){
-        printf("\nHow many vehicles would you like? (int only, min 1, max 100): ");
+        printf("\nHow many vehicles would you like? (integer only, min 1, max 100): ");
         while(temp < 1 || temp > 100)
             scanf(" %d", &temp);
         temp++;
