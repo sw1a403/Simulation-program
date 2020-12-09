@@ -36,7 +36,7 @@ void simulate_one_bus(){
 
 void speed_vehicle(float *vehicle_speed){
     float temp;
-    printf("Enter speed (km/h). Can't be slower than 1, or faster than 80: ");
+    printf("Enter speed (km/h). Can't be slower than 1, or faster than 80 (if decimal use \".\", e.g. 50.5): ");
     while(temp < 1 || temp > 80)
         scanf(" %f", &temp);
     temp /= 3.6;
@@ -206,16 +206,17 @@ void calculate_travel_time(float speed, int dif_dist_intersec[6], int traffic_li
                 }
             } 
         }             
-        if(round == 5)
-            time = ac_dec_time;
+        
         total_time += time; 
         total_time_added += temp_time_added_round;
         print_time_intersec(time, total_time, temp_time_added_round, total_time_added, round);   
         if(temp_time_added_round > 1 && round <= 4 && round != 0){
-            if(to_short == 1)
+            if(to_short == 1){
                 printf("\nAfter intersection[%d] the bus didn't accelerate to full speed,"
                        "\nThe added time is %d seconds", round + 1, ac_dec_time);
-            else
+                if(round == 5)
+                    time = ac_dec_time;
+            } else
                 printf("\nTime added for acceleration is %d seconds", ac_dec_time);  
         }  
     } 
