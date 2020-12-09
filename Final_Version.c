@@ -166,7 +166,8 @@ void calculate_travel_time(float speed, int dif_dist_intersec[6], int traffic_li
                     } else{ 
                         intersec_arrays[0][round + 1][i] = intersec_arrays[0][round][i];  
                         intersec_arrays[0][round][i] = 0; 
-                        time_added_round[round] = light_green_or_red(timer_traffic_light, traffic_light_interval, traffic_light_model, round); 
+                        time_added_round[round] = light_green_or_red(timer_traffic_light, traffic_light_interval, 
+                                                                        traffic_light_model, round); 
                         for(intersec_nr = round + 1; intersec_nr < 4; intersec_nr++){ 
                             for(j = 0; j < i; j++){ 
                                 if(intersec_arrays[0][intersec_nr][j] == 1){ 
@@ -175,7 +176,8 @@ void calculate_travel_time(float speed, int dif_dist_intersec[6], int traffic_li
                                         intersec_arrays[0][intersec_nr][j] = 0; 
                                     } else{ 
                                         time_next_intersec = (int)dif_dist_intersec[intersec_nr] / speed + timer_traffic_light + ac_dec_time; 
-                                        time_added_round[intersec_nr] = light_green_or_red(time_next_intersec, traffic_light_interval, traffic_light_model, intersec_nr);
+                                        time_added_round[intersec_nr] = light_green_or_red(time_next_intersec, traffic_light_interval, 
+                                                                                            traffic_light_model, intersec_nr);
                                         if(time_added_round[intersec_nr] == 0){ 
                                             intersec_arrays[0][intersec_nr + 1][j] = intersec_arrays[0][round][j];  
                                             intersec_arrays[0][intersec_nr][j] = 0; 
