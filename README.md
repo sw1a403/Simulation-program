@@ -5,7 +5,12 @@ The user will be able to input different factors that will affect the simulation
 
 * Max speed of the motor vehicles and bus in km/h.
 * Are there traffic lights on the road?
-* Traffic lights timing interval in seconds with a minimum of 1 second and a maximum of 60 seconds.
+  * If yes do you want different traffic light models:
+    *If yes what traffic light model for each intersection.
+    *If no what traffic light model for all intersections.
+  * If yes do you want different traffic light timing intervals:
+     *If yes what timing intervals for each intersection.
+     *If no what timing interval for all intersections.
 * Are there other motor vehicles on the road?
 * Amount of other motor vehicles on the road if there is any minimum of 2 and maximum of 100.
 * Is there more than one lane on the route?
@@ -13,9 +18,8 @@ The user will be able to input different factors that will affect the simulation
 
 The following factors are static in this simulation program:
 
-* Road length set to 1000m
-* Constant acceleration of 1.4 m/s^2
-* Constant deceleration of -3.2 m/s^2
+* Road length set to 950m
+* Constant acceleration/deceleration of 1.4 m/s^2
 * Amount of traffic lights set to 5 in the simulation program. 
 
 This way we are able to simulate what affects the travel time of a bus on Jyllandsgade most, and indicate what may reduce the travel time.
