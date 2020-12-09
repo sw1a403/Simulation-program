@@ -166,8 +166,7 @@ void calculate_travel_time(float speed, int dif_dist_intersec[6], int traffic_li
                     } else{ 
                         intersec_arrays[0][round + 1][i] = intersec_arrays[0][round][i];  
                         intersec_arrays[0][round][i] = 0; 
-                        time_added_round[round] = light_green_or_red(timer_traffic_light, traffic_light_interval, 
-                                                                        traffic_light_model, round); 
+                        time_added_round[round] = light_green_or_red(timer_traffic_light, traffic_light_interval, traffic_light_model, round); 
                         for(intersec_nr = round + 1; intersec_nr < 4; intersec_nr++){ 
                             for(j = 0; j < i; j++){ 
                                 if(intersec_arrays[0][intersec_nr][j] == 1){ 
@@ -176,8 +175,7 @@ void calculate_travel_time(float speed, int dif_dist_intersec[6], int traffic_li
                                         intersec_arrays[0][intersec_nr][j] = 0; 
                                     } else{ 
                                         time_next_intersec = (int)dif_dist_intersec[intersec_nr] / speed + timer_traffic_light + ac_dec_time; 
-                                        time_added_round[intersec_nr] = light_green_or_red(time_next_intersec, traffic_light_interval, 
-                                                                                            traffic_light_model, intersec_nr);
+                                        time_added_round[intersec_nr] = light_green_or_red(time_next_intersec, traffic_light_interval, traffic_light_model, intersec_nr);
                                         if(time_added_round[intersec_nr] == 0){ 
                                             intersec_arrays[0][intersec_nr + 1][j] = intersec_arrays[0][round][j];  
                                             intersec_arrays[0][intersec_nr][j] = 0; 
@@ -360,13 +358,13 @@ void print_time_intersec(int time, int total_time, int time_added_round, int tot
         minutes = (int)total_time_added / MINUTE;
         seconds = (int)fmod(total_time_added, MINUTE);
         if(minutes == 0){
-            printf("\nTotal time spend at red light were %d %s.", seconds,
+            printf("\nTotal time spent at red light were %d %s.", seconds,
             (seconds > 1) ? strings_plural[1] : strings_singular[1]);
         } else if(seconds == 0){
-            printf("\nTotal time spend at red light were %d %s.",  minutes, 
+            printf("\nTotal time spent at red light were %d %s.",  minutes, 
             (minutes > 1) ? strings_plural[0] : strings_singular[0]);
         } else{
-            printf("\nTotal time spend at red light were %d %s and %d %s.",
+            printf("\nTotal time spent at red light were %d %s and %d %s.",
             minutes, (minutes > 1) ? strings_plural[0] : strings_singular[0],
             seconds, (seconds > 1) ? strings_plural[1] : strings_singular[1]);
         }
