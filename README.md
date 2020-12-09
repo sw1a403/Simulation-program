@@ -6,11 +6,11 @@ The user will be able to input different factors that will affect the simulation
 * Max speed of the motor vehicles and bus in km/h.
 * Are there traffic lights on the road?
   * If yes do you want different traffic light models:
-    *If yes what traffic light model for each intersection.
-    *If no what traffic light model for all intersections.
+    * If yes what traffic light model for each intersection.
+    * If no what traffic light model for all intersections.
   * If yes do you want different traffic light timing intervals:
-     *If yes what timing intervals for each intersection.
-     *If no what timing interval for all intersections.
+     * If yes what timing intervals for each intersection.
+     * If no what timing interval for all intersections.
 * Are there other motor vehicles on the road?
 * Amount of other motor vehicles on the road if there is any minimum of 2 and maximum of 100.
 * Is there more than one lane on the route?
